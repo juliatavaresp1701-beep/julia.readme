@@ -88,6 +88,8 @@
     .about-grid{ display:grid; grid-template-columns:1fr 1.3fr; gap:40px; align-items:center; }
     @media(max-width:860px){ .about-grid{ grid-template-columns:1fr; } }
     .about-photo{ border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); background:var(--pink-soft); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; color:var(--pink-dark); font-weight:700; }
+    /* Fill the frame whatever shape the photo is, cropping rather than squashing. */
+    .about-photo img{ width:100%; height:100%; object-fit:cover; }
     .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; padding:0; list-style:none; }
     .chips li{ background:var(--pink-soft); color:var(--pink-dark); font-weight:600; font-size:.9rem; padding:7px 14px; border-radius:999px; }
     .brazil{ background: linear-gradient(180deg, transparent, transparent), radial-gradient(700px 380px at 100% 100%, var(--accent-soft), transparent 60%); }
@@ -197,8 +199,13 @@
         <span class="eyebrow">About me</span>
         <h2 data-cms="about_heading">Warm, patient, and all about real conversation</h2>
         <div class="about-grid">
-          <!-- Photo: upload julia.jpg into the repo and it will show here (see setup notes). -->
-          <div class="about-photo" aria-hidden="true">Your photo here</div>
+          <!-- Photo: julia.jpg in the repo root wins if present; otherwise we fall
+               back to the Preply avatar, then to a plain placeholder. See the script
+               near the bottom of the page. -->
+          <div class="about-photo">
+            <img id="aboutPhoto" alt="Julia T., Brazilian Portuguese teacher" referrerpolicy="no-referrer">
+            <span id="photoFallback" hidden>Your photo here</span>
+          </div>
           <div>
             <p data-cms="about_p1">I'm a native Brazilian Portuguese speaker with a background in university tutoring, and I love helping learners speak confidently and naturally. My lessons focus on real-life conversation — we talk, laugh, and along the way I give gentle, natural corrections so you keep your flow.</p>
             <p data-cms="about_p2">Everyone learns differently, so I adapt to your pace and your goals, whether you're a complete beginner or polishing an accent you already have. The vibe is relaxed and easy-going, never stressful.</p>
@@ -366,6 +373,26 @@
     navLinks.addEventListener('click', function(e){
       if(e.target.tagName === 'A'){ navLinks.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
     });
+
+    // ---- About photo: try each source in turn, placeholder if none load ----
+    // julia.jpg (committed to the repo) is preferred: it is full quality and
+    // ours, so it can't move. The Preply avatar is a stand-in until that exists.
+    (function(){
+      var img = document.getElementById('aboutPhoto');
+      var fallback = document.getElementById('photoFallback');
+      if(!img) return;
+      var sources = [
+        'julia.jpg',
+        'https://avatars.preply.com/i/logos/i/logos/avatar_aru3dr7xvu5.jpg'
+      ];
+      var i = 0;
+      img.addEventListener('error', function(){
+        i++;
+        if(i < sources.length){ img.src = sources[i]; }
+        else { img.remove(); if(fallback) fallback.hidden = false; }
+      });
+      img.src = sources[0];
+    })();
 
     // ---- Tiny CMS loader: pull content.json (kept in sync with Notion) ----
     (function(){

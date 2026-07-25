@@ -103,6 +103,17 @@ Leave it blank or `#` and the button shows "PDF coming soon" instead.
 
 ## Adding a photo
 
-Upload a `julia.jpg` to this repo and replace the
-`<div class="about-photo">…</div>` block in `index.html` with
-`<img src="julia.jpg" alt="Photo of Julia T.">`.
+The About section tries three things in order and uses the first that loads:
+
+1. **`julia.jpg` in this repo** — preferred, and the only one fully under your
+   control.
+2. The **Preply avatar** — a stand-in so the section isn't empty.
+3. A plain pink placeholder, if neither loads.
+
+So to use your own photo, just upload it — no code editing:
+
+GitHub → **Add file** → **Upload files** → drop in your photo named exactly
+`julia.jpg` → **Commit changes**. It appears within a minute or two.
+
+The frame is portrait (4:5) and the photo is cropped to fill it, so a portrait
+or square photo works best. A wide landscape photo will be cropped at the sides.
