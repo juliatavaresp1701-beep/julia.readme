@@ -101,8 +101,10 @@
     .brazil .feature .ic svg{ width:23px; height:23px; }
     /* Inline icons that sit next to text (button, badge) track the text size. */
     .i{ width:1.05em; height:1.05em; flex:0 0 auto; }
-    .avail-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin:34px 0 16px; }
-    .avail-updated{ margin:0; color:var(--muted); font-size:.85rem; }
+    .avail-head{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin:34px 0 6px; }
+    .avail-updated{ margin:0 0 16px; color:var(--muted); font-size:.85rem; }
+    .avail-tz{ display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--muted); }
+    .avail-tz select{ font:inherit; font-weight:600; color:var(--pink-dark); background:var(--pink-soft); border:1px solid var(--line); border-radius:999px; padding:6px 12px; max-width:min(60vw,320px); cursor:pointer; }
     /* One column per day, scrolling sideways rather than squeezing the page. */
     .avail-days{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(132px,1fr); gap:14px; overflow-x:auto; padding-bottom:8px; }
     .avail-day{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px; }
@@ -385,8 +387,12 @@
         <div id="availability" hidden>
           <div class="avail-head">
             <h3 style="margin:0;">Free times</h3>
-            <p id="availUpdated" class="avail-updated"></p>
+            <div class="avail-tz">
+              <label for="tzPicker">Show times in</label>
+              <select id="tzPicker"></select>
+            </div>
           </div>
+          <p id="availUpdated" class="avail-updated"></p>
           <div class="avail-days" id="availDays"></div>
           <p class="avail-foot">
             Slots are 30 minutes and update automatically.
@@ -445,79 +451,161 @@
       img.src = sources[0];
     })();
 
-    // ---- Free slots, from availability.json (rebuilt by the calendar Action) ----
-    // The file holds only free start times, never anything from the events
-    // themselves. If it is missing or empty the whole block stays hidden and
-    // the Preply button above remains the way to book.
+    // ---- Free slots, from availability.json ----------------------------
+    // Slots arrive as UTC instants, so the page can show them in whatever
+    // timezone the visitor picks. Nothing from the calendar events themselves
+    // is in that file - only the start times of free 30-minute blocks.
     (function(){
       var wrap = document.getElementById('availability');
       if(!wrap) return;
-      fetch('availability.json?v=' + Date.now())
-        .then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(data){
-          if(!data || !Array.isArray(data.days) || !data.days.length) return;
-          var host = document.getElementById('availDays');
-          var tz = data.timezone || 'America/Sao_Paulo';
 
-          data.days.forEach(function(day){
-            if(!day.slots || !day.slots.length) return;
-            // Parse as midday UTC so the date can't slip a day either way.
-            var d = new Date(day.date + 'T12:00:00Z');
-            var col = document.createElement('div');
-            col.className = 'avail-day';
+      var STORE = 'julia.tz';
+      var data = null, booking = null, tz = null;
 
-            var dow = document.createElement('span');
-            dow.className = 'dow';
-            dow.textContent = d.toLocaleDateString(undefined, { weekday:'short', timeZone:'UTC' });
-            var h = document.createElement('h4');
-            h.textContent = d.toLocaleDateString(undefined, { day:'numeric', month:'short', timeZone:'UTC' });
-            col.appendChild(dow); col.appendChild(h);
+      function browserZone(){
+        try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; }
+        catch(e){ return 'UTC'; }
+      }
+      function usable(zone){
+        try { new Intl.DateTimeFormat('en', { timeZone: zone }); return true; }
+        catch(e){ return false; }
+      }
+      function saved(){
+        try { var z = localStorage.getItem(STORE); return z && usable(z) ? z : null; }
+        catch(e){ return null; }
+      }
+      function remember(zone){ try { localStorage.setItem(STORE, zone); } catch(e){} }
 
-            // Group the times into unbroken runs, so a break in the day reads
-            // as a visible gap instead of one undifferentiated list of chips.
-            var step = data.slotMinutes || 30;
-            var mins = function(t){ var p = t.split(':'); return (+p[0]) * 60 + (+p[1]); };
-            var runs = [];
-            day.slots.forEach(function(t){
-              var last = runs[runs.length - 1];
-              if(last && mins(t) - mins(last[last.length - 1]) === step) last.push(t);
-              else runs.push([t]);
-            });
+      // Offset label like "UTC+02:00", so a visitor can sanity-check the zone.
+      function offsetLabel(zone){
+        try {
+          var p = new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' })
+            .formatToParts(new Date()).find(function(x){ return x.type === 'timeZoneName'; });
+          return p ? p.value.replace(/^GMT/, 'UTC') : '';
+        } catch(e){ return ''; }
+      }
+      function partsIn(date, zone){
+        var p = new Intl.DateTimeFormat('en-CA', {
+          timeZone: zone, year:'numeric', month:'2-digit', day:'2-digit',
+          hour:'2-digit', minute:'2-digit', hour12:false,
+        }).formatToParts(date).reduce(function(a,x){ a[x.type] = x.value; return a; }, {});
+        return { date: p.year + '-' + p.month + '-' + p.day,
+                 time: (p.hour === '24' ? '00' : p.hour) + ':' + p.minute };
+      }
 
-            runs.forEach(function(run){
-              var slots = document.createElement('div');
-              slots.className = 'avail-slots';
-              run.forEach(function(t){
-                var a = document.createElement('a');
-                a.className = 'avail-slot book-link';
-                a.href = 'https://preply.com/en/tutor/7573352';
-                a.target = '_blank'; a.rel = 'noopener noreferrer';
-                a.textContent = t;
-                slots.appendChild(a);
-              });
-              col.appendChild(slots);
-            });
-            host.appendChild(col);
+      function buildPicker(){
+        var sel = document.getElementById('tzPicker');
+        var zones = [];
+        try { if(typeof Intl.supportedValuesOf === 'function') zones = Intl.supportedValuesOf('timeZone'); }
+        catch(e){}
+        // Older browsers don't expose the full list; at minimum offer the
+        // visitor's own zone and Julia's, so the control is never useless.
+        if(!zones.length) zones = [browserZone(), data.timezone, 'UTC'];
+        if(zones.indexOf(tz) === -1) zones = zones.concat([tz]);
+        zones.filter(function(z, i, a){ return a.indexOf(z) === i; })
+             .sort()
+             .forEach(function(zone){
+               var o = document.createElement('option');
+               o.value = zone;
+               var off = offsetLabel(zone);
+               o.textContent = zone.replace(/_/g, ' ') + (off ? '  (' + off + ')' : '');
+               if(zone === tz) o.selected = true;
+               sel.appendChild(o);
+             });
+        sel.addEventListener('change', function(){
+          tz = sel.value; remember(tz); render();
+        });
+      }
+
+      function slotHref(iso){
+        // A per-slot Preply link if one is configured, else the profile page.
+        // Preply identifies a slot by the same UTC instant we publish, so the
+        // template just needs a {iso} (or {unix}) placeholder.
+        var tpl = booking && booking.booking_slot_url;
+        if(tpl){
+          return String(tpl)
+            .replace(/{iso}/g, encodeURIComponent(iso))
+            .replace(/{unix}/g, String(Math.floor(new Date(iso).getTime() / 1000)));
+        }
+        return (booking && booking.booking_url) || 'https://preply.com/en/tutor/7573352';
+      }
+
+      function render(){
+        var host = document.getElementById('availDays');
+        host.textContent = '';
+
+        var step = (data.slotMinutes || 30) * 60000;
+        var byDay = [];
+        data.slots.forEach(function(iso){
+          var when = partsIn(new Date(iso), tz);
+          var day = byDay[byDay.length - 1];
+          if(!day || day.date !== when.date){ day = { date: when.date, items: [] }; byDay.push(day); }
+          day.items.push({ iso: iso, time: when.time, t: new Date(iso).getTime() });
+        });
+
+        byDay.forEach(function(day){
+          var d = new Date(day.date + 'T12:00:00Z');
+          var col = document.createElement('div');
+          col.className = 'avail-day';
+
+          var dow = document.createElement('span');
+          dow.className = 'dow';
+          dow.textContent = d.toLocaleDateString(undefined, { weekday:'short', timeZone:'UTC' });
+          var h = document.createElement('h4');
+          h.textContent = d.toLocaleDateString(undefined, { day:'numeric', month:'short', timeZone:'UTC' });
+          col.appendChild(dow); col.appendChild(h);
+
+          // Split into unbroken runs so a break in the day is visible.
+          var runs = [];
+          day.items.forEach(function(item){
+            var last = runs[runs.length - 1];
+            if(last && item.t - last[last.length - 1].t === step) last.push(item);
+            else runs.push([item]);
           });
 
-          if(!host.children.length) return;
+          runs.forEach(function(run){
+            var box = document.createElement('div');
+            box.className = 'avail-slots';
+            run.forEach(function(item){
+              var a = document.createElement('a');
+              a.className = 'avail-slot';
+              a.href = slotHref(item.iso);
+              a.target = '_blank'; a.rel = 'noopener noreferrer';
+              a.textContent = item.time;
+              box.appendChild(a);
+            });
+            col.appendChild(box);
+          });
 
-          var stamp = document.getElementById('availUpdated');
-          if(stamp && data.generated){
-            var when = new Date(data.generated);
-            stamp.textContent = 'Updated ' + when.toLocaleString(undefined, {
+          host.appendChild(col);
+        });
+
+        var stamp = document.getElementById('availUpdated');
+        if(stamp){
+          var bits = [];
+          if(data.generated){
+            bits.push('Updated ' + new Date(data.generated).toLocaleString(undefined, {
               day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'
-            }) + ' · times in ' + tz.split('/').pop().replace(/_/g,' ');
+            }));
           }
-          wrap.hidden = false;
-          // Booking URL from content.json, if it loaded first, wins.
-          var booking = document.querySelector('.book-link[href]');
-          if(booking){
-            var url = booking.getAttribute('href');
-            wrap.querySelectorAll('.book-link').forEach(function(el){ el.setAttribute('href', url); });
-          }
-        })
-        .catch(function(){ /* no availability.json yet -> block stays hidden */ });
+          bits.push('shown in ' + tz.replace(/_/g,' ') + (offsetLabel(tz) ? ' (' + offsetLabel(tz) + ')' : ''));
+          if(data.timezone && data.timezone !== tz) bits.push("Julia is in " + data.timezone.replace(/_/g,' '));
+          stamp.textContent = bits.join(' · ');
+        }
+      }
+
+      Promise.all([
+        fetch('availability.json?v=' + Date.now()).then(function(r){ return r.ok ? r.json() : null; }),
+        fetch('content.json?v=' + Date.now()).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+      ]).then(function(res){
+        data = res[0]; booking = res[1];
+        if(!data || !Array.isArray(data.slots) || !data.slots.length) return;
+        tz = saved() || browserZone();
+        if(!usable(tz)) tz = data.timezone || 'UTC';
+        buildPicker();
+        render();
+        wrap.hidden = false;
+      }).catch(function(){ /* no availability yet -> block stays hidden */ });
     })();
 
     // ---- Tiny CMS loader: pull content.json (kept in sync with Notion) ----

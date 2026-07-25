@@ -111,15 +111,15 @@ const overlaps = (busy, start, end) => busy.some(([s, e]) => s < end && e > star
 
 /* ---------- slot building ------------------------------------------------ */
 
-function buildDays(busy, now) {
-  const { timezone, slotMinutes, minBlockMinutes, daysAhead, minNoticeHours, workingHours } = CONFIG;
+function buildSlots(busy, now, timezone) {
+  const { slotMinutes, minBlockMinutes, daysAhead, minNoticeHours, workingHours } = CONFIG;
   const slotMs = slotMinutes * MINUTE;
   // A slot is only offered if the unbroken free run around it is at least this
   // long, so a lone half-hour gap between two lessons is never bookable.
   const minRun = Math.max(minBlockMinutes || slotMinutes, slotMinutes);
   const minRunSlots = Math.ceil(minRun / slotMinutes);
   const earliest = now + (minNoticeHours || 0) * 60 * MINUTE;
-  const days = [];
+  const all = [];
 
   for (let offset = 0; offset < daysAhead; offset++) {
     const dayStart = new Date(now + offset * 24 * 60 * MINUTE);
@@ -140,13 +140,7 @@ function buildDays(busy, now) {
       // never be padded out by time that is too soon to book anyway.
       let run = [];
       const flush = () => {
-        if (run.length >= minRunSlots) {
-          for (const s of run) {
-            slots.push(new Intl.DateTimeFormat('en-GB', {
-              timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false,
-            }).format(new Date(s)));
-          }
-        }
+        if (run.length >= minRunSlots) slots.push(...run);
         run = [];
       };
 
@@ -157,26 +151,43 @@ function buildDays(busy, now) {
       flush();
     }
 
-    if (slots.length) {
-      days.push({
-        date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-        slots,
-      });
-    }
+    all.push(...slots);
   }
 
-  return days;
+  // Days are built in Julia's timezone but a visitor's day boundaries differ,
+  // so the page regroups these; sorting keeps that grouping straightforward.
+  return all.sort((a, b) => a - b);
 }
 
 /* ---------- main --------------------------------------------------------- */
 
 async function loadCalendar(source) {
-  if (/^https?:\/\//i.test(source)) {
-    const res = await fetch(source);
-    if (!res.ok) throw new Error(`Calendar feed returned HTTP ${res.status}`);
-    return ical.async.parseICS(await res.text());
+  const text = /^https?:\/\//i.test(source)
+    ? await (async () => {
+        const res = await fetch(source);
+        if (!res.ok) throw new Error(`Calendar feed returned HTTP ${res.status}`);
+        return res.text();
+      })()
+    : readFileSync(source, 'utf8');
+  return { events: await ical.async.parseICS(text), text };
+}
+
+/**
+ * The calendar's own timezone, which Google publishes as X-WR-TIMEZONE. Using
+ * it means the bookable hours in the config are read in the same zone Julia
+ * sees in Google, so moving country changes nothing here.
+ */
+function calendarTimezone(text, fallback) {
+  const match = text.match(/^X-WR-TIMEZONE:(.+)$/mi);
+  const zone = match && match[1].trim();
+  if (!zone) return fallback;
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: zone });  // reject anything unusable
+    return zone;
+  } catch {
+    console.warn(`Calendar reports timezone "${zone}", which this system does not know. Using ${fallback}.`);
+    return fallback;
   }
-  return ical.async.parseICS(readFileSync(source, 'utf8'));
 }
 
 /**
@@ -205,19 +216,21 @@ const now = Date.now();
 const rangeStart = now;
 const rangeEnd = now + CONFIG.daysAhead * 24 * 60 * MINUTE;
 
-const events = await loadCalendar(source);
+const { events, text } = await loadCalendar(source);
+const timezone = calendarTimezone(text, CONFIG.timezone);
 const busy = busyIntervals(events, rangeStart, rangeEnd);
-const days = buildDays(busy, now);
+const slots = buildSlots(busy, now, timezone);
 
+// Slots are published as UTC instants, not local clock times, so the page can
+// show them in whatever timezone the visitor is in. The calendar's own zone
+// travels along only so the page can say which one the hours were set in.
 const output = {
   generated: new Date(now).toISOString(),
-  timezone: CONFIG.timezone,
+  timezone,
   slotMinutes: CONFIG.slotMinutes,
-  days,
+  slots: slots.map((t) => new Date(t).toISOString()),
 };
 
 writeFileSync(OUT, JSON.stringify(output, null, 2) + '\n');
-console.log(
-  `Wrote ${days.length} day(s), ${days.reduce((n, d) => n + d.slots.length, 0)} free slot(s), ` +
-  `from ${busy.length} busy interval(s).`,
-);
+console.log(`Calendar timezone: ${timezone}`);
+console.log(`Wrote ${slots.length} free slot(s) from ${busy.length} busy interval(s).`);

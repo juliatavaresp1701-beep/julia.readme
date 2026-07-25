@@ -2,8 +2,11 @@ name: Sync availability from Google Calendar
 
 on:
   schedule:
-    # Every 30 minutes. GitHub queues cron jobs, so it can run a few minutes late.
-    - cron: '7,37 * * * *'
+    # Every 5 minutes - the shortest interval GitHub Actions allows. Scheduled
+    # runs are best-effort and can be delayed or skipped under load, so treat
+    # this as "usually within 5-10 minutes", not a guarantee. Runs that find no
+    # change commit nothing, so this does not churn the site.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
   push:
     # Rebuild immediately when the bookable hours change.

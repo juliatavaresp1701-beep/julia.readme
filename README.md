@@ -103,8 +103,16 @@ Leave it blank or `#` and the button shows "PDF coming soon" instead.
 
 ## Availability from Google Calendar
 
-A GitHub Action reads your calendar every 30 minutes and writes the free
-30-minute slots into `availability.json`, which the Schedule section displays.
+A GitHub Action reads your calendar every 5 minutes (the fastest GitHub
+allows) and writes the free 30-minute slots into `availability.json`, which the
+Schedule section displays. Scheduled runs are best-effort, so under load it can
+be 10 minutes rather than 5; use **Run workflow** when you need it immediately.
+
+Slots are published as UTC instants, and the page converts them to whichever
+timezone the visitor is in, detected from their browser. A picker lets them
+switch to any timezone in the world, and the choice is remembered. Your own
+timezone is read from the calendar feed itself (`X-WR-TIMEZONE`), so the
+bookable hours below are always interpreted in the zone you see in Google.
 
 **Only start and end times are ever read.** Event titles, descriptions,
 locations and guests are never touched, so nothing private can appear on the
@@ -146,12 +154,28 @@ Edit `scripts/calendar-config.json` — no other file needs touching:
   or several ranges for a split day: `[["08:00","12:00"],["16:00","20:00"]]`.
 - `minNoticeHours` — hides slots that are too soon (default 12 hours).
 - `daysAhead` — how far ahead to publish (default 14 days).
+- `timezone` — only a fallback; the calendar's own timezone wins.
 - `slotMinutes` — how long each bookable slot is (default 30).
 - `minBlockMinutes` — how much unbroken free time a slot needs around it before
   it is offered (default 60). Set it equal to `slotMinutes` to offer every free
   half hour again.
 
 Committing a change here re-runs the sync straight away.
+
+### Linking a slot straight to Preply
+
+By default every slot links to your Preply profile. To make a slot open its own
+booking option, set `booking_slot_url` in `content.json` to Preply's URL pattern
+with `{iso}` where the time goes, for example:
+
+```json
+"booking_slot_url": "https://preply.com/en/tutor/7573352?timeslot={iso}"
+```
+
+`{iso}` is replaced with the slot's UTC instant (`2026-07-28T14:00:00.000Z`) —
+the same value Preply uses in its own `data-timeslot` attribute — and `{unix}`
+is available if a seconds timestamp is needed instead. Leave it empty and slots
+fall back to the profile link.
 
 ### Keeping it honest
 
