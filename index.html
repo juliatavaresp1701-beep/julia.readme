@@ -94,7 +94,10 @@
     .chips li{ background:var(--pink-soft); color:var(--pink-dark); font-weight:600; font-size:.9rem; padding:7px 14px; border-radius:999px; }
     .brazil{ background: linear-gradient(180deg, transparent, transparent), radial-gradient(700px 380px at 100% 100%, var(--accent-soft), transparent 60%); }
     .brazil .feature{ display:flex; gap:14px; align-items:flex-start; }
-    .brazil .feature .ic{ flex:0 0 auto; width:44px; height:44px; border-radius:12px; background:var(--pink-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+    .brazil .feature .ic{ flex:0 0 auto; width:44px; height:44px; border-radius:12px; background:var(--pink-soft); display:flex; align-items:center; justify-content:center; color:var(--pink-dark); }
+    .brazil .feature .ic svg{ width:23px; height:23px; }
+    /* Inline icons that sit next to text (button, badge) track the text size. */
+    .i{ width:1.05em; height:1.05em; flex:0 0 auto; }
     .review .q{ color:var(--ink); font-size:1.02rem; }
     .review .who{ display:flex; align-items:center; gap:12px; margin-top:14px; }
     .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--pink),var(--pink-hover)); color:var(--pink-ink); font-weight:800; display:flex; align-items:center; justify-content:center; }
@@ -229,21 +232,39 @@
         <p class="lead" data-cms="brazil_intro">You won't just learn textbook grammar — you'll pick up the warmth, rhythm and everyday expressions that make Brazilian Portuguese feel alive.</p>
         <div class="grid grid-3" style="margin-top:34px;">
           <div class="card feature">
-            <div class="ic" aria-hidden="true">🗣️</div>
+            <div class="ic" aria-hidden="true">
+              <!-- waveform: pronunciation / how the language sounds -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round">
+                <path d="M4 10v4M8 6.5v11M12 3.5v17M16 6.5v11M20 10v4"/>
+              </svg>
+            </div>
             <div>
               <h3 data-cms="brazil_f1_title">Authentic accent</h3>
               <p style="color:var(--muted);margin:0;" data-cms="brazil_f1_desc">Sound natural with a true Brazilian accent and pronunciation — the way people actually speak.</p>
             </div>
           </div>
           <div class="card feature">
-            <div class="ic" aria-hidden="true">🎉</div>
+            <div class="ic" aria-hidden="true">
+              <!-- music note: the culture behind the words -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 17.5V4.8l11-2.2v12.9"/>
+                <circle cx="6" cy="17.5" r="3"/>
+                <circle cx="17" cy="15.5" r="3"/>
+              </svg>
+            </div>
             <div>
               <h3 data-cms="brazil_f2_title">Culture &amp; context</h3>
               <p style="color:var(--muted);margin:0;" data-cms="brazil_f2_desc">From music and food to daily habits, you'll learn the culture behind the words.</p>
             </div>
           </div>
           <div class="card feature">
-            <div class="ic" aria-hidden="true">💬</div>
+            <div class="ic" aria-hidden="true">
+              <!-- speech bubble: slang and everyday phrases -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9.5L4 20.5z"/>
+                <path d="M8.5 10h.01M12 10h.01M15.5 10h.01" stroke-width="2.2"/>
+              </svg>
+            </div>
             <div>
               <h3 data-cms="brazil_f3_title">Real-life expressions</h3>
               <p style="color:var(--muted);margin:0;" data-cms="brazil_f3_desc">Slang, gírias and the little phrases that make you sound like a local, not a tourist.</p>
@@ -286,7 +307,7 @@
             <h3 data-cms="ebook1_title">50 Everyday Brazilian Expressions</h3>
             <p data-cms="ebook1_desc">A pocket guide to the phrases Brazilians really use — with pronunciation tips and examples.</p>
             <!-- Set the download link in Notion (key: ebook1_url). Handled by JS below. -->
-            <a class="btn btn-ghost ebook-dl" href="#">⬇ Download PDF</a>
+            <a class="btn btn-ghost ebook-dl" href="#"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v11m0 0 4-4m-4 4-4-4M4.5 17v2A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5v-2"/></svg><span class="ebook-dl-label">Download PDF</span></a>
           </article>
           <!-- Extra cards below are static placeholders (not in Notion). Duplicate the card above to add real ones. -->
           <article class="card ebook" style="opacity:.75;">
@@ -336,7 +357,7 @@
         <h2 data-cms="schedule_heading">Book a time that works for you</h2>
         <div class="card schedule-card" style="margin-top:26px;">
           <div style="max-width:60ch;">
-            <span class="tzbadge">🕒 Times shown in Brasília time (BRT)</span>
+            <span class="tzbadge"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>Times shown in Brasília time (BRT)</span>
             <p style="margin:16px 0 0;" data-cms="schedule_note">My live availability and calendar are always up to date on Preply. Pick any open slot there and you're booked instantly — no back-and-forth. Times display in Brasília time, so double-check your own time zone when choosing.</p>
           </div>
           <a class="btn btn-primary btn-big book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">See availability &amp; book</a>
@@ -491,7 +512,9 @@
           if(dl){
             var url = c.ebook1_url;
             if(!url || String(url).trim() === '' || String(url).trim() === '#'){
-              dl.textContent = '📄 PDF coming soon';
+              // Only swap the label, so the inline SVG icon survives.
+              var label = dl.querySelector('.ebook-dl-label');
+              if(label){ label.textContent = 'PDF coming soon'; } else { dl.textContent = 'PDF coming soon'; }
               dl.setAttribute('aria-disabled', 'true');
               dl.style.opacity = '.55';
               dl.style.pointerEvents = 'none';
