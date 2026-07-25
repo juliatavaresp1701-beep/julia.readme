@@ -118,6 +118,9 @@
     .avail-slot{ background:var(--pink-soft); color:var(--pink-dark); border:0; border-radius:8px; font:inherit; font-size:.85rem; font-weight:600; padding:5px 9px; text-decoration:none; display:inline-block; }
     .avail-slot:hover{ background:var(--pink); color:var(--pink-ink); }
     .avail-foot{ margin:14px 0 0; color:var(--muted); font-size:.9rem; }
+    .slot-toast{ position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(8px); z-index:200; background:var(--ink); color:#fff; font-weight:600; font-size:.92rem; padding:12px 20px; border-radius:999px; box-shadow:var(--shadow); opacity:0; transition:opacity .18s ease, transform .18s ease; max-width:calc(100vw - 32px); text-align:center; }
+    .slot-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+    @media (prefers-reduced-motion: reduce){ .slot-toast{ transition:none; } }
     .review .q{ color:var(--ink); font-size:1.02rem; }
     .review .who{ display:flex; align-items:center; gap:12px; margin-top:14px; }
     .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--pink),var(--pink-hover)); color:var(--pink-ink); font-weight:800; display:flex; align-items:center; justify-content:center; }
@@ -395,10 +398,13 @@
           <p id="availUpdated" class="avail-updated"></p>
           <div class="avail-days" id="availDays"></div>
           <p class="avail-foot">
-            Slots are 30 minutes and update automatically.
+            Slots are 30 minutes and update automatically. Pick one and it opens Preply
+            with the time copied, ready to paste.
             <a class="book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book on Preply →</a>
           </p>
         </div>
+        <!-- Confirms which slot was chosen as Preply opens in the other tab. -->
+        <div id="slotToast" class="slot-toast" role="status" aria-live="polite" hidden></div>
       </div>
     </section>
 
@@ -530,6 +536,60 @@
         return (booking && booking.booking_url) || 'https://preply.com/en/tutor/7573352';
       }
 
+      // "Tue 28 Jul, 16:00 (Europe/Berlin)" - unambiguous once it leaves the page.
+      function slotLabel(iso){
+        var d = new Date(iso);
+        var when = d.toLocaleString(undefined, {
+          timeZone: tz, weekday:'short', day:'numeric', month:'short',
+          hour:'2-digit', minute:'2-digit', hour12:false,
+        });
+        return when + ' (' + tz.replace(/_/g,' ') + ')';
+      }
+
+      var toastTimer = null;
+      function toast(message){
+        var el = document.getElementById('slotToast');
+        if(!el) return;
+        el.textContent = message;
+        el.hidden = false;
+        // Next frame, so the transition runs from the hidden state.
+        requestAnimationFrame(function(){ el.classList.add('show'); });
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function(){
+          el.classList.remove('show');
+          setTimeout(function(){ el.hidden = true; }, 200);
+        }, 5000);
+      }
+
+      function copy(text){
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          return navigator.clipboard.writeText(text);
+        }
+        // Older browsers, and any page not served over https.
+        return new Promise(function(resolve, reject){
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;top:-1000px;opacity:0;';
+            document.body.appendChild(ta);
+            ta.select();
+            var ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            ok ? resolve() : reject();
+          } catch(e){ reject(e); }
+        });
+      }
+
+      function handoff(iso){
+        var label = slotLabel(iso);
+        copy(label)
+          .then(function(){ toast('Copied ' + label + ' — pick this time on Preply'); })
+          // A refused clipboard is not a failure: the time is in the toast,
+          // and Preply is already opening in the other tab.
+          .catch(function(){ toast('Pick ' + label + ' on Preply'); });
+      }
+
       function render(){
         var host = document.getElementById('availDays');
         host.textContent = '';
@@ -572,6 +632,11 @@
               a.href = slotHref(item.iso);
               a.target = '_blank'; a.rel = 'noopener noreferrer';
               a.textContent = item.time;
+              a.title = 'Opens Preply and copies ' + slotLabel(item.iso);
+              // Deliberately does NOT preventDefault: the link opens Preply
+              // natively, so no popup blocker is involved. The copy just rides
+              // along, and the toast still helps if the clipboard is refused.
+              a.addEventListener('click', function(){ handoff(item.iso); });
               box.appendChild(a);
             });
             col.appendChild(box);
