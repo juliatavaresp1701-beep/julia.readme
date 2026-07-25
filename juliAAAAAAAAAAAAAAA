@@ -1,0 +1,425 @@
+Julia T. — Native Brazilian Portuguese teacher
+     Single-page site. Self-contained (HTML + CSS + JS inline).
+
+     CONTENT COMES FROM NOTION:
+     Every editable piece has a data-cms="key" attribute. On load, the small
+     script at the bottom fetches content.json and fills those in. The text you
+     see in the HTML is only the FALLBACK (shown if content.json is missing).
+     content.json is kept in sync with a Notion database by a GitHub Action.
+     Julia edits Notion -> Action updates content.json -> site shows the change.
+     ========================================================================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Julia T. — Native Brazilian Portuguese Teacher</title>
+  <meta name="description" content="Learn Brazilian Portuguese with Julia T. — relaxed, conversation-focused lessons. 5.0 stars on Preply. $13 per 50-minute lesson." />
+
+  <style>
+    :root{
+      --green:#1b8a5a; --green-dark:#14663f; --green-soft:#e8f4ee;
+      --yellow:#f5c518; --yellow-soft:#fdf3d0;
+      --ink:#22312b; --muted:#5d6d66; --bg:#fbfaf6; --card:#ffffff; --line:#e8e6df;
+      --shadow:0 10px 30px rgba(20,60,45,.08); --shadow-sm:0 4px 14px rgba(20,60,45,.06);
+      --radius:18px; --radius-lg:26px; --max:1080px;
+      --font:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    }
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; scroll-padding-top:78px; }
+    body{ margin:0; font-family:var(--font); color:var(--ink); background:var(--bg); line-height:1.65; -webkit-font-smoothing:antialiased; }
+    img{ max-width:100%; display:block; }
+    a{ color:var(--green-dark); }
+    h1,h2,h3{ line-height:1.2; margin:0 0 .5em; }
+    h1{ font-size:clamp(2rem, 5vw, 3.1rem); letter-spacing:-.5px; }
+    h2{ font-size:clamp(1.5rem, 3.5vw, 2.2rem); letter-spacing:-.3px; }
+    p{ margin:0 0 1em; }
+    .wrap{ width:100%; max-width:var(--max); margin:0 auto; padding:0 20px; }
+    section{ padding:72px 0; }
+    section:nth-of-type(even){ background:#fff; }
+    .eyebrow{ display:inline-block; text-transform:uppercase; letter-spacing:2px; font-size:.72rem; font-weight:700; color:var(--green); background:var(--green-soft); padding:6px 12px; border-radius:999px; margin-bottom:14px; }
+    .lead{ font-size:1.12rem; color:var(--muted); max-width:60ch; }
+    .btn{ display:inline-flex; align-items:center; gap:.5em; font-weight:700; font-size:1rem; text-decoration:none; padding:14px 26px; border-radius:999px; border:2px solid transparent; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease, background .15s ease; }
+    .btn-primary{ background:var(--green); color:#fff; box-shadow:var(--shadow-sm); }
+    .btn-primary:hover{ background:var(--green-dark); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .btn-ghost{ background:#fff; color:var(--green-dark); border-color:var(--line); }
+    .btn-ghost:hover{ border-color:var(--green); transform:translateY(-2px); }
+    .btn-big{ font-size:1.15rem; padding:18px 34px; }
+    header.nav{ position:sticky; top:0; z-index:50; background:rgba(251,250,246,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--ink); }
+    .brand .dot{ width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, var(--green) 55%, var(--yellow) 55%); flex:0 0 auto; }
+    .nav-links{ display:flex; gap:4px; list-style:none; margin:0; padding:0; }
+    .nav-links a{ text-decoration:none; color:var(--muted); font-weight:600; font-size:.95rem; padding:8px 12px; border-radius:8px; }
+    .nav-links a:hover{ color:var(--green-dark); background:var(--green-soft); }
+    .nav-cta{ display:none; }
+    .menu-btn{ display:none; background:none; border:0; cursor:pointer; padding:8px; }
+    .menu-btn span{ display:block; width:24px; height:2px; background:var(--ink); margin:5px 0; border-radius:2px; }
+    @media(max-width:860px){
+      .nav-links{ position:absolute; top:64px; left:0; right:0; flex-direction:column; background:var(--bg); border-bottom:1px solid var(--line); padding:10px 20px; display:none; }
+      .nav-links.open{ display:flex; }
+      .nav-links a{ padding:12px 8px; }
+      .menu-btn{ display:block; }
+    }
+    @media(min-width:861px){ .nav-cta{ display:inline-flex; } }
+    .hero{ background: radial-gradient(1200px 500px at 15% -10%, var(--yellow-soft), transparent 60%), radial-gradient(900px 500px at 100% 0%, var(--green-soft), transparent 55%); padding-top:60px; }
+    .hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
+    @media(max-width:860px){ .hero-grid{ grid-template-columns:1fr; gap:32px; } }
+    .stars{ display:inline-flex; align-items:center; gap:10px; margin:6px 0 22px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px 16px; box-shadow:var(--shadow-sm); }
+    .stars .s{ color:var(--yellow); letter-spacing:2px; font-size:1.05rem; }
+    .stars b{ color:var(--ink); }
+    .stars span{ color:var(--muted); font-size:.9rem; }
+    .hero-cta{ display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; }
+    .price-pill{ margin-top:20px; font-size:.95rem; color:var(--muted); }
+    .price-pill b{ color:var(--green-dark); font-size:1.05rem; }
+    .video-frame{ position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); border:6px solid #fff; background:#000; }
+    .video-ratio{ position:relative; width:100%; padding-top:56.25%; }
+    .video-ratio iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm); padding:26px; }
+    .grid{ display:grid; gap:22px; }
+    .grid-3{ grid-template-columns:repeat(3,1fr); }
+    .grid-2{ grid-template-columns:repeat(2,1fr); }
+    @media(max-width:860px){ .grid-3,.grid-2{ grid-template-columns:1fr; } }
+    .about-grid{ display:grid; grid-template-columns:1fr 1.3fr; gap:40px; align-items:center; }
+    @media(max-width:860px){ .about-grid{ grid-template-columns:1fr; } }
+    .about-photo{ border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); background:var(--green-soft); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; color:var(--green-dark); font-weight:700; }
+    .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; padding:0; list-style:none; }
+    .chips li{ background:var(--green-soft); color:var(--green-dark); font-weight:600; font-size:.9rem; padding:7px 14px; border-radius:999px; }
+    .brazil{ background: linear-gradient(180deg, transparent, transparent), radial-gradient(700px 380px at 100% 100%, var(--yellow-soft), transparent 60%); }
+    .brazil .feature{ display:flex; gap:14px; align-items:flex-start; }
+    .brazil .feature .ic{ flex:0 0 auto; width:44px; height:44px; border-radius:12px; background:var(--green-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+    .review .q{ color:var(--ink); font-size:1.02rem; }
+    .review .who{ display:flex; align-items:center; gap:12px; margin-top:14px; }
+    .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--green),var(--yellow)); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .review .who b{ display:block; }
+    .review .who small{ color:var(--muted); }
+    .review .rs{ color:var(--yellow); letter-spacing:2px; }
+    .ebook .cover{ aspect-ratio:3/4; border-radius:14px; overflow:hidden; margin-bottom:16px; background:linear-gradient(160deg,var(--green) 0%, var(--green-dark) 100%); display:flex; align-items:center; justify-content:center; color:#fff; text-align:center; padding:20px; }
+    .ebook .cover span{ font-weight:800; font-size:1.15rem; line-height:1.3; }
+    .ebook h3{ font-size:1.15rem; }
+    .ebook p{ color:var(--muted); font-size:.95rem; }
+    .pricing{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; max-width:620px; margin:0 auto; }
+    @media(max-width:560px){ .pricing{ grid-template-columns:1fr; } }
+    .price-card{ text-align:center; position:relative; display:flex; flex-direction:column; }
+    .price-card.popular{ border-color:var(--green); box-shadow:var(--shadow); }
+    .price-card .tag{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--yellow); color:#3a2e00; font-weight:800; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px; }
+    .price-card h3{ font-size:1.1rem; margin-bottom:4px; }
+    .price-card .amt{ font-size:2rem; font-weight:800; color:var(--green-dark); }
+    .price-card .amt small{ font-size:.85rem; color:var(--muted); font-weight:600; }
+    .price-card .sub{ color:var(--muted); font-size:.9rem; min-height:2.4em; margin-bottom:16px; }
+    .price-card .btn{ margin-top:auto; justify-content:center; }
+    .schedule-card{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; }
+    .tzbadge{ display:inline-flex; align-items:center; gap:8px; background:var(--green-soft); color:var(--green-dark); font-weight:700; padding:8px 14px; border-radius:999px; font-size:.9rem; }
+    .cta-final{ text-align:center; background: radial-gradient(700px 380px at 50% 0%, var(--green-soft), transparent 60%); }
+    .cta-final .socials{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:22px; }
+    .cta-final .socials a{ color:var(--muted); text-decoration:none; font-weight:600; }
+    .cta-final .socials a:hover{ color:var(--green-dark); }
+    footer{ padding:34px 0; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; text-align:center; }
+    .skip{ position:absolute; left:-999px; top:0; background:#fff; padding:10px 16px; border-radius:8px; z-index:100; }
+    .skip:focus{ left:12px; top:12px; }
+    :focus-visible{ outline:3px solid var(--yellow); outline-offset:2px; border-radius:6px; }
+  </style>
+</head>
+
+<body>
+  <a href="#hero" class="skip">Skip to content</a>
+
+  <!-- ===================== STICKY NAV ===================== -->
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a href="#hero" class="brand"><span class="dot" aria-hidden="true"></span> Julia&nbsp;T.</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+      <nav aria-label="Main">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#about">About</a></li>
+          <li><a href="#brazil">Brazil</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#ebooks">Ebooks</a></li>
+          <li><a href="#price">Price</a></li>
+          <li><a href="#schedule">Schedule</a></li>
+          <li><a href="#book">Book</a></li>
+        </ul>
+      </nav>
+      <!-- The Preply booking URL is set in Notion (key: booking_url) for ALL buttons at once -->
+      <a class="btn btn-primary nav-cta book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book on Preply</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Native Brazilian Portuguese Teacher</span>
+          <h1 data-cms="hero_name">Olá, I'm Julia&nbsp;T.</h1>
+          <p class="lead" data-cms="hero_tagline">Improve your Portuguese in a relaxed and easy-going way.</p>
+
+          <div class="stars" role="img" aria-label="Star rating on Preply">
+            <span class="s" aria-hidden="true">★★★★★</span>
+            <b data-cms="hero_rating">5.0</b><span data-cms="hero_reviews_note">· 20 reviews on Preply</span>
+          </div>
+
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-big book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book on Preply</a>
+            <a class="btn btn-ghost btn-big" href="#about">Meet Julia</a>
+          </div>
+
+          <p class="price-pill"><b data-cms="hero_price">$13</b> per 50-minute lesson · 1-on-1 online</p>
+        </div>
+
+        <!-- Vimeo intro. Change the video in Notion (key: video_url = the full vimeo.com/... link) -->
+        <div>
+          <div class="video-frame">
+            <div class="video-ratio">
+              <iframe id="introVideo"
+                src="https://player.vimeo.com/video/1201629819?h=0c659d5b4a&title=0&byline=0&portrait=0"
+                title="Intro video — Julia T., Brazilian Portuguese teacher"
+                allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section id="about">
+      <div class="wrap">
+        <span class="eyebrow">About me</span>
+        <h2 data-cms="about_heading">Warm, patient, and all about real conversation</h2>
+        <div class="about-grid">
+          <!-- Photo: upload julia.jpg into the repo and it will show here (see setup notes). -->
+          <div class="about-photo" aria-hidden="true">Your photo here</div>
+          <div>
+            <p data-cms="about_p1">I'm a native Brazilian Portuguese speaker with a background in university tutoring, and I love helping learners speak confidently and naturally. My lessons focus on real-life conversation — we talk, laugh, and along the way I give gentle, natural corrections so you keep your flow.</p>
+            <p data-cms="about_p2">Everyone learns differently, so I adapt to your pace and your goals, whether you're a complete beginner or polishing an accent you already have. The vibe is relaxed and easy-going, never stressful.</p>
+            <p style="margin-bottom:8px;"><strong>Languages I speak:</strong></p>
+            <ul class="chips">
+              <li data-cms="lang1">🇧🇷 Portuguese — Native</li>
+              <li data-cms="lang2">🇬🇧 English — C1</li>
+              <li data-cms="lang3">🇩🇪 German — B1</li>
+              <li data-cms="lang4">🇪🇸 Spanish — A2</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== BRAZIL ===================== -->
+    <section id="brazil" class="brazil">
+      <div class="wrap">
+        <span class="eyebrow">Why Brazilian Portuguese</span>
+        <h2 data-cms="brazil_heading">Learn the real, living language of Brazil</h2>
+        <p class="lead" data-cms="brazil_intro">You won't just learn textbook grammar — you'll pick up the warmth, rhythm and everyday expressions that make Brazilian Portuguese feel alive.</p>
+        <div class="grid grid-3" style="margin-top:34px;">
+          <div class="card feature">
+            <div class="ic" aria-hidden="true">🗣️</div>
+            <div>
+              <h3 data-cms="brazil_f1_title">Authentic accent</h3>
+              <p style="color:var(--muted);margin:0;" data-cms="brazil_f1_desc">Sound natural with a true Brazilian accent and pronunciation — the way people actually speak.</p>
+            </div>
+          </div>
+          <div class="card feature">
+            <div class="ic" aria-hidden="true">🎉</div>
+            <div>
+              <h3 data-cms="brazil_f2_title">Culture &amp; context</h3>
+              <p style="color:var(--muted);margin:0;" data-cms="brazil_f2_desc">From music and food to daily habits, you'll learn the culture behind the words.</p>
+            </div>
+          </div>
+          <div class="card feature">
+            <div class="ic" aria-hidden="true">💬</div>
+            <div>
+              <h3 data-cms="brazil_f3_title">Real-life expressions</h3>
+              <p style="color:var(--muted);margin:0;" data-cms="brazil_f3_desc">Slang, gírias and the little phrases that make you sound like a local, not a tourist.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== REVIEWS ===================== -->
+    <!-- These start as PLACEHOLDERS. Edit them in Notion (review1_quote, review1_name, review1_country, ...). -->
+    <section id="reviews">
+      <div class="wrap">
+        <span class="eyebrow">Reviews</span>
+        <h2 data-cms="reviews_heading">What students say</h2>
+        <p class="lead" data-cms="reviews_intro">5.0 stars from 20 reviews on Preply.</p>
+        <div class="grid grid-2" style="margin-top:34px;">
+          <figure class="card review" style="margin:0;">
+            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="q" style="margin:10px 0 0;" data-cms="review1_quote">“Julia makes every lesson feel like chatting with a friend. My speaking improved so fast and I never felt nervous.”</blockquote>
+            <figcaption class="who"><span class="av" aria-hidden="true">L</span><span><b data-cms="review1_name">Lucas</b><small data-cms="review1_country">Germany</small></span></figcaption>
+          </figure>
+          <figure class="card review" style="margin:0;">
+            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="q" style="margin:10px 0 0;" data-cms="review2_quote">“The gentle corrections are the best part — I finally understand my mistakes without losing confidence.”</blockquote>
+            <figcaption class="who"><span class="av" aria-hidden="true">S</span><span><b data-cms="review2_name">Sophie</b><small data-cms="review2_country">France</small></span></figcaption>
+          </figure>
+          <figure class="card review" style="margin:0;">
+            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="q" style="margin:10px 0 0;" data-cms="review3_quote">“Relaxed, patient and genuinely fun. Julia adapts to exactly what I need each week.”</blockquote>
+            <figcaption class="who"><span class="av" aria-hidden="true">M</span><span><b data-cms="review3_name">Michael</b><small data-cms="review3_country">United States</small></span></figcaption>
+          </figure>
+          <figure class="card review" style="margin:0;">
+            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote class="q" style="margin:10px 0 0;" data-cms="review4_quote">“I booked a trial and stayed for months. The Brazilian expressions she teaches are gold.”</blockquote>
+            <figcaption class="who"><span class="av" aria-hidden="true">A</span><span><b data-cms="review4_name">Ana</b><small data-cms="review4_country">Spain</small></span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EBOOKS ===================== -->
+    <section id="ebooks">
+      <div class="wrap">
+        <span class="eyebrow">Ebooks</span>
+        <h2 data-cms="ebooks_heading">Free &amp; downloadable resources</h2>
+        <p class="lead" data-cms="ebooks_intro">Handy guides to keep practising between lessons.</p>
+        <div class="grid grid-3" style="margin-top:34px;">
+          <article class="card ebook">
+            <div class="cover" aria-hidden="true"><span data-cms="ebook1_title">50 Everyday Brazilian Expressions</span></div>
+            <h3 data-cms="ebook1_title">50 Everyday Brazilian Expressions</h3>
+            <p data-cms="ebook1_desc">A pocket guide to the phrases Brazilians really use — with pronunciation tips and examples.</p>
+            <!-- Set the download link in Notion (key: ebook1_url). Handled by JS below. -->
+            <a class="btn btn-ghost ebook-dl" href="#">⬇ Download PDF</a>
+          </article>
+          <!-- Extra cards below are static placeholders (not in Notion). Duplicate the card above to add real ones. -->
+          <article class="card ebook" style="opacity:.75;">
+            <div class="cover" aria-hidden="true" style="background:linear-gradient(160deg,#c9c6bd,#a7a49b);"><span>Coming soon</span></div>
+            <h3>Your next ebook</h3>
+            <p>Coming soon.</p>
+            <a class="btn btn-ghost" href="#" aria-disabled="true">Coming soon</a>
+          </article>
+          <article class="card ebook" style="opacity:.75;">
+            <div class="cover" aria-hidden="true" style="background:linear-gradient(160deg,#c9c6bd,#a7a49b);"><span>Coming soon</span></div>
+            <h3>Your next ebook</h3>
+            <p>Coming soon.</p>
+            <a class="btn btn-ghost" href="#" aria-disabled="true">Coming soon</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PRICE ===================== -->
+    <section id="price">
+      <div class="wrap">
+        <span class="eyebrow">Price</span>
+        <h2 data-cms="price_heading">Simple, friendly pricing</h2>
+        <p class="lead" data-cms="price_intro">All lessons are 1-on-1 and booked through Preply.</p>
+        <div class="pricing" style="margin-top:38px;">
+          <div class="card price-card">
+            <h3>Trial lesson</h3>
+            <div class="amt" data-cms="price_trial">Ask</div>
+            <p class="sub" data-cms="price_trial_sub">A relaxed first chat to see if we're a good fit.</p>
+            <a class="btn btn-ghost book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book trial</a>
+          </div>
+          <div class="card price-card popular">
+            <span class="tag">Most popular</span>
+            <h3>Single lesson</h3>
+            <div class="amt"><span data-cms="price_single">$13</span> <small>/ 50 min</small></div>
+            <p class="sub" data-cms="price_single_sub">One 50-minute 1-on-1 lesson, fully tailored to you.</p>
+            <a class="btn btn-primary book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book now</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SCHEDULE ===================== -->
+    <section id="schedule">
+      <div class="wrap">
+        <span class="eyebrow">Schedule</span>
+        <h2 data-cms="schedule_heading">Book a time that works for you</h2>
+        <div class="card schedule-card" style="margin-top:26px;">
+          <div style="max-width:60ch;">
+            <span class="tzbadge">🕒 Times shown in Brasília time (BRT)</span>
+            <p style="margin:16px 0 0;" data-cms="schedule_note">My live availability and calendar are always up to date on Preply. Pick any open slot there and you're booked instantly — no back-and-forth. Times display in Brasília time, so double-check your own time zone when choosing.</p>
+          </div>
+          <a class="btn btn-primary btn-big book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">See availability &amp; book</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== WHERE TO BOOK (FINAL CTA) ===================== -->
+    <section id="book" class="cta-final">
+      <div class="wrap">
+        <span class="eyebrow">Where to book</span>
+        <h2 data-cms="cta_heading">Ready to start speaking Portuguese?</h2>
+        <p class="lead" style="margin:0 auto 26px;" data-cms="cta_text">All lessons are booked securely through Preply. Let's have a relaxed first chat!</p>
+        <a class="btn btn-primary btn-big book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book on Preply</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p style="margin:0;">© <span id="year"></span> <span data-cms="hero_name_short">Julia&nbsp;T.</span> · Native Brazilian Portuguese teacher · Made with ☕ and love</p>
+    </div>
+  </footer>
+
+  <script>
+    // ---- Footer year + mobile menu ----
+    document.getElementById('year').textContent = new Date().getFullYear();
+    var menuBtn = document.getElementById('menuBtn');
+    var navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', function(){
+      var open = navLinks.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navLinks.addEventListener('click', function(e){
+      if(e.target.tagName === 'A'){ navLinks.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
+    });
+
+    // ---- Tiny CMS loader: pull content.json (kept in sync with Notion) ----
+    (function(){
+      function set(sel, fn){ document.querySelectorAll(sel).forEach(fn); }
+      fetch('content.json?v=' + Date.now())
+        .then(function(r){ return r.ok ? r.json() : {}; })
+        .then(function(c){
+          Object.keys(c).forEach(function(key){
+            var val = c[key];
+            if(val === undefined || val === null || String(val).trim() === '') return;
+            // text
+            set('[data-cms="'+key+'"]', function(el){ el.textContent = val; });
+            // generic href (ebook download, instagram)
+            set('[data-cms-href="'+key+'"]', function(el){ el.setAttribute('href', val); });
+            // mailto link (sets both href and visible text)
+            set('[data-cms-mail="'+key+'"]', function(el){ el.setAttribute('href', 'mailto:'+val); el.textContent = val; });
+          });
+          // Booking URL -> every button with .book-link
+          if(c.booking_url){ set('.book-link', function(el){ el.setAttribute('href', c.booking_url); }); }
+          // Optional: swap the intro video if a new vimeo link is given
+          if(c.video_url){
+            var m = String(c.video_url).match(/vimeo\.com\/(\d+)(?:\/([a-z0-9]+))?/i);
+            if(m){
+              var src = 'https://player.vimeo.com/video/'+m[1]+(m[2] ? '?h='+m[2]+'&' : '?')+'title=0&byline=0&portrait=0';
+              var f = document.getElementById('introVideo'); if(f) f.setAttribute('src', src);
+            }
+          }
+          // Ebook download button: only enable when a real link is set in Notion.
+          var dl = document.querySelector('.ebook-dl');
+          if(dl){
+            var url = c.ebook1_url;
+            if(!url || String(url).trim() === '' || String(url).trim() === '#'){
+              dl.textContent = '📄 PDF coming soon';
+              dl.setAttribute('aria-disabled', 'true');
+              dl.style.opacity = '.55';
+              dl.style.pointerEvents = 'none';
+            } else {
+              dl.setAttribute('href', url);
+              if(/^https?:\/\//i.test(url)){
+                // External host (Google Drive, Dropbox…): open in a new tab.
+                dl.setAttribute('target', '_blank');
+                dl.setAttribute('rel', 'noopener noreferrer');
+              } else {
+                // File shipped in the repo: force a real download.
+                dl.setAttribute('download', '');
+              }
+            }
+          }
+        })
+        .catch(function(){ /* no content.json yet -> keep the built-in fallback text */ });
+    })();
+  </script>
+</body>
+</html>
