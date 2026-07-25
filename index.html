@@ -16,6 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Julia T. — Native Brazilian Portuguese Teacher</title>
   <meta name="description" content="Learn Brazilian Portuguese with Julia T. — relaxed, conversation-focused lessons. 5.0 stars on Preply. $13 per 50-minute lesson." />
+  <link rel="icon" href="flag-round-250.png" />
 
   <style>
     :root{
@@ -53,7 +54,7 @@
     header.nav{ position:sticky; top:0; z-index:50; background:rgba(255,247,249,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
     .nav-inner{ display:flex; align-items:center; justify-content:space-between; height:64px; }
     .brand{ display:flex; align-items:center; gap:10px; font-weight:800; text-decoration:none; color:var(--ink); }
-    .brand .dot{ width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg, var(--pink) 55%, var(--accent) 55%); flex:0 0 auto; }
+    .brand .dot{ width:26px; height:26px; border-radius:50%; flex:0 0 auto; }
     .nav-links{ display:flex; gap:4px; list-style:none; margin:0; padding:0; }
     .nav-links a{ text-decoration:none; color:var(--muted); font-weight:600; font-size:.95rem; padding:8px 12px; border-radius:8px; }
     .nav-links a:hover{ color:var(--pink-dark); background:var(--pink-soft); }
@@ -87,7 +88,9 @@
     @media(max-width:860px){ .grid-3,.grid-2{ grid-template-columns:1fr; } }
     .about-grid{ display:grid; grid-template-columns:1fr 1.3fr; gap:40px; align-items:center; }
     @media(max-width:860px){ .about-grid{ grid-template-columns:1fr; } }
-    .about-photo{ border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); background:var(--pink-soft); aspect-ratio:4/5; display:flex; align-items:center; justify-content:center; color:var(--pink-dark); font-weight:700; }
+    /* Square, and capped: the photo is 320px, so a taller or wider frame would
+       upscale it into mush and crop the face. Cap keeps it close to 1:1 pixels. */
+    .about-photo{ border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); background:var(--pink-soft); aspect-ratio:1/1; max-width:380px; display:flex; align-items:center; justify-content:center; color:var(--pink-dark); font-weight:700; }
     /* Fill the frame whatever shape the photo is, cropping rather than squashing. */
     .about-photo img{ width:100%; height:100%; object-fit:cover; }
     .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; padding:0; list-style:none; }
@@ -140,7 +143,7 @@
   <!-- ===================== STICKY NAV ===================== -->
   <header class="nav">
     <div class="wrap nav-inner">
-      <a href="#hero" class="brand"><span class="dot" aria-hidden="true"></span> Julia&nbsp;T.</a>
+      <a href="#hero" class="brand"><img class="dot" src="flag-round-250.png" alt="" aria-hidden="true"> Julia&nbsp;T.</a>
       <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
@@ -202,9 +205,8 @@
         <span class="eyebrow">About me</span>
         <h2 data-cms="about_heading">Warm, patient, and all about real conversation</h2>
         <div class="about-grid">
-          <!-- Photo: julia.jpg in the repo root wins if present; otherwise we fall
-               back to the Preply avatar, then to a plain placeholder. See the script
-               near the bottom of the page. -->
+          <!-- Photo: julia.jpg from this repo; pink placeholder if it ever fails
+               to load. See the script near the bottom of the page. -->
           <div class="about-photo">
             <img id="aboutPhoto" alt="Julia T., Brazilian Portuguese teacher" referrerpolicy="no-referrer">
             <span id="photoFallback" hidden>Your photo here</span>
@@ -402,10 +404,9 @@
       var img = document.getElementById('aboutPhoto');
       var fallback = document.getElementById('photoFallback');
       if(!img) return;
-      var sources = [
-        'julia.jpg',
-        'https://avatars.preply.com/i/logos/i/logos/avatar_aru3dr7xvu5.jpg'
-      ];
+      // Self-hosted in this repo, so nothing depends on an outside host.
+      // Replacing julia.jpg swaps the photo with no code change.
+      var sources = ['julia.jpg'];
       var i = 0;
       img.addEventListener('error', function(){
         i++;

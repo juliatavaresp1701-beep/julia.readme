@@ -101,19 +101,13 @@ attachments use temporary links that expire, so host the PDF elsewhere:
 
 Leave it blank or `#` and the button shows "PDF coming soon" instead.
 
-## Adding a photo
+## Photos and the favicon
 
-The About section tries three things in order and uses the first that loads:
+Two images live in this repo:
 
-1. **`julia.jpg` in this repo** — preferred, and the only one fully under your
-   control.
-2. The **Preply avatar** — a stand-in so the section isn't empty.
-3. A plain pink placeholder, if neither loads.
-
-So to use your own photo, just upload it — no code editing:
-
-GitHub → **Add file** → **Upload files** → drop in your photo named exactly
-`julia.jpg` → **Commit changes**. It appears within a minute or two.
-
-The frame is portrait (4:5) and the photo is cropped to fill it, so a portrait
-or square photo works best. A wide landscape photo will be cropped at the sides.
+- **`julia.jpg`** — the About-section photo. To change it, upload a new file
+  with that exact name (GitHub → **Add file** → **Upload files**) and it swaps
+  automatically; no code editing. The frame is square, so a square or portrait
+  photo works best. Bigger than 320px will look sharper.
+- **`flag-round-250.png`** — the browser-tab favicon, also used as the little
+  round mark next to "Julia T." in the navigation bar.
