@@ -109,6 +109,10 @@
     .avail-day h4{ margin:0 0 2px; font-size:.95rem; }
     .avail-day .dow{ display:block; color:var(--muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; }
     .avail-slots{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    /* Each group is one unbroken stretch of time. The wider gap between groups
+       is the break in the day, so the eye can see where the free time ends. */
+    .avail-slots + .avail-slots{ margin-top:16px; position:relative; }
+    .avail-slots + .avail-slots::before{ content:""; position:absolute; top:-9px; left:2px; right:2px; height:1px; background:var(--line); }
     .avail-slot{ background:var(--pink-soft); color:var(--pink-dark); border:0; border-radius:8px; font:inherit; font-size:.85rem; font-weight:600; padding:5px 9px; text-decoration:none; display:inline-block; }
     .avail-slot:hover{ background:var(--pink); color:var(--pink-ink); }
     .avail-foot{ margin:14px 0 0; color:var(--muted); font-size:.9rem; }
@@ -469,17 +473,30 @@
             h.textContent = d.toLocaleDateString(undefined, { day:'numeric', month:'short', timeZone:'UTC' });
             col.appendChild(dow); col.appendChild(h);
 
-            var slots = document.createElement('div');
-            slots.className = 'avail-slots';
+            // Group the times into unbroken runs, so a break in the day reads
+            // as a visible gap instead of one undifferentiated list of chips.
+            var step = data.slotMinutes || 30;
+            var mins = function(t){ var p = t.split(':'); return (+p[0]) * 60 + (+p[1]); };
+            var runs = [];
             day.slots.forEach(function(t){
-              var a = document.createElement('a');
-              a.className = 'avail-slot book-link';
-              a.href = 'https://preply.com/en/tutor/7573352';
-              a.target = '_blank'; a.rel = 'noopener noreferrer';
-              a.textContent = t;
-              slots.appendChild(a);
+              var last = runs[runs.length - 1];
+              if(last && mins(t) - mins(last[last.length - 1]) === step) last.push(t);
+              else runs.push([t]);
             });
-            col.appendChild(slots);
+
+            runs.forEach(function(run){
+              var slots = document.createElement('div');
+              slots.className = 'avail-slots';
+              run.forEach(function(t){
+                var a = document.createElement('a');
+                a.className = 'avail-slot book-link';
+                a.href = 'https://preply.com/en/tutor/7573352';
+                a.target = '_blank'; a.rel = 'noopener noreferrer';
+                a.textContent = t;
+                slots.appendChild(a);
+              });
+              col.appendChild(slots);
+            });
             host.appendChild(col);
           });
 
