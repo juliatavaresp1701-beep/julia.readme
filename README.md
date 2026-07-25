@@ -62,6 +62,34 @@ The database id is already set in the workflow, so you don't need to configure i
 GitHub → **Actions** tab → *Sync content from Notion* → **Run workflow**.
 After ~1 min, reload the website (hard refresh: **Cmd/Ctrl + Shift + R**).
 
+## Adding your Preply reviews
+
+The reviews section is built from `content.json`, not from the HTML — so you can
+add 4 reviews or 40 and the page just grows. Paste them into the `reviews` list:
+
+```json
+"reviews": [
+  {
+    "quote": "Paste the review exactly as the student wrote it.",
+    "name": "Marco",
+    "country": "Italy",
+    "rating": 5,
+    "date": "March 2026"
+  },
+  { "quote": "...", "name": "...", "country": "...", "rating": 5 }
+]
+```
+
+Only `quote` is required. `rating` defaults to 5 stars. `country` and `date` are
+shown under the name if present, skipped if not.
+
+While the list is empty, the section shows a "Read all reviews on Preply" link
+instead — so the page never displays review text that isn't really yours.
+
+If you'd rather edit reviews in Notion (which stores flat rows, not lists), use
+`review1_quote`, `review1_name`, `review1_country`, `review1_rating`,
+`review2_quote`, … and the site reads them in order until they run out.
+
 ## Adding an ebook PDF
 
 The ebook download link is the `ebook1_url` field in Notion. Notion's own file

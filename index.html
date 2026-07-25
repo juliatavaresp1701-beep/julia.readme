@@ -19,9 +19,13 @@
 
   <style>
     :root{
-      --pink:#c94060; --pink-dark:#a83254; --pink-soft:#fde4ea;
-      --accent:#f7b9cb; --accent-soft:#fce8ef;
-      --ink:#3a2630; --muted:#7a6069; --bg:#fff7f9; --card:#ffffff; --line:#f2dfe4;
+      /* --pink is the baby pink itself: a SURFACE colour, never text.
+         White on it is only 1.63:1, so anything sitting on --pink uses
+         --pink-ink. --pink-dark is the deep pink for text on white. */
+      --pink:#FFB7CE; --pink-hover:#ff9dbb; --pink-ink:#5c1a30;
+      --pink-dark:#a83254; --pink-soft:#ffe4ed;
+      --accent:#FFB7CE; --accent-soft:#ffe9f0;
+      --ink:#3a2630; --muted:#7a6069; --bg:#fff7f9; --card:#ffffff; --line:#f7dbe4;
       --shadow:0 10px 30px rgba(150,60,90,.10); --shadow-sm:0 4px 14px rgba(150,60,90,.07);
       --radius:18px; --radius-lg:26px; --max:1080px;
       --font:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
@@ -38,11 +42,11 @@
     .wrap{ width:100%; max-width:var(--max); margin:0 auto; padding:0 20px; }
     section{ padding:72px 0; }
     section:nth-of-type(even){ background:#fff; }
-    .eyebrow{ display:inline-block; text-transform:uppercase; letter-spacing:2px; font-size:.72rem; font-weight:700; color:var(--pink); background:var(--pink-soft); padding:6px 12px; border-radius:999px; margin-bottom:14px; }
+    .eyebrow{ display:inline-block; text-transform:uppercase; letter-spacing:2px; font-size:.72rem; font-weight:700; color:var(--pink-dark); background:var(--pink-soft); padding:6px 12px; border-radius:999px; margin-bottom:14px; }
     .lead{ font-size:1.12rem; color:var(--muted); max-width:60ch; }
     .btn{ display:inline-flex; align-items:center; gap:.5em; font-weight:700; font-size:1rem; text-decoration:none; padding:14px 26px; border-radius:999px; border:2px solid transparent; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease, background .15s ease; }
-    .btn-primary{ background:var(--pink); color:#fff; box-shadow:var(--shadow-sm); }
-    .btn-primary:hover{ background:var(--pink-dark); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .btn-primary{ background:var(--pink); color:var(--pink-ink); box-shadow:var(--shadow-sm); }
+    .btn-primary:hover{ background:var(--pink-hover); transform:translateY(-2px); box-shadow:var(--shadow); }
     .btn-ghost{ background:#fff; color:var(--pink-dark); border-color:var(--line); }
     .btn-ghost:hover{ border-color:var(--pink); transform:translateY(-2px); }
     .btn-big{ font-size:1.15rem; padding:18px 34px; }
@@ -67,7 +71,7 @@
     .hero-grid{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
     @media(max-width:860px){ .hero-grid{ grid-template-columns:1fr; gap:32px; } }
     .stars{ display:inline-flex; align-items:center; gap:10px; margin:6px 0 22px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:8px 16px; box-shadow:var(--shadow-sm); }
-    .stars .s{ color:var(--pink); letter-spacing:2px; font-size:1.05rem; }
+    .stars .s{ color:var(--pink-dark); letter-spacing:2px; font-size:1.05rem; }
     .stars b{ color:var(--ink); }
     .stars span{ color:var(--muted); font-size:.9rem; }
     .hero-cta{ display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; }
@@ -91,11 +95,11 @@
     .brazil .feature .ic{ flex:0 0 auto; width:44px; height:44px; border-radius:12px; background:var(--pink-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
     .review .q{ color:var(--ink); font-size:1.02rem; }
     .review .who{ display:flex; align-items:center; gap:12px; margin-top:14px; }
-    .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--pink),var(--accent)); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; }
+    .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--pink),var(--pink-hover)); color:var(--pink-ink); font-weight:800; display:flex; align-items:center; justify-content:center; }
     .review .who b{ display:block; }
     .review .who small{ color:var(--muted); }
-    .review .rs{ color:var(--pink); letter-spacing:2px; }
-    .ebook .cover{ aspect-ratio:3/4; border-radius:14px; overflow:hidden; margin-bottom:16px; background:linear-gradient(160deg,var(--pink) 0%, var(--pink-dark) 100%); display:flex; align-items:center; justify-content:center; color:#fff; text-align:center; padding:20px; }
+    .review .rs{ color:var(--pink-dark); letter-spacing:2px; }
+    .ebook .cover{ aspect-ratio:3/4; border-radius:14px; overflow:hidden; margin-bottom:16px; background:linear-gradient(160deg,var(--pink-dark) 0%, #7a2242 100%); display:flex; align-items:center; justify-content:center; color:#fff; text-align:center; padding:20px; }
     .ebook .cover span{ font-weight:800; font-size:1.15rem; line-height:1.3; }
     .ebook h3{ font-size:1.15rem; }
     .ebook p{ color:var(--muted); font-size:.95rem; }
@@ -103,7 +107,7 @@
     @media(max-width:560px){ .pricing{ grid-template-columns:1fr; } }
     .price-card{ text-align:center; position:relative; display:flex; flex-direction:column; }
     .price-card.popular{ border-color:var(--pink); box-shadow:var(--shadow); }
-    .price-card .tag{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--accent); color:#6b2038; font-weight:800; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px; }
+    .price-card .tag{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--accent); color:var(--pink-ink); font-weight:800; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px; }
     .price-card h3{ font-size:1.1rem; margin-bottom:4px; }
     .price-card .amt{ font-size:2rem; font-weight:800; color:var(--pink-dark); }
     .price-card .amt small{ font-size:.85rem; color:var(--muted); font-weight:600; }
@@ -240,34 +244,23 @@
     </section>
 
     <!-- ===================== REVIEWS ===================== -->
-    <!-- These start as PLACEHOLDERS. Edit them in Notion (review1_quote, review1_name, review1_country, ...). -->
+    <!-- Rendered from content.json - see the "reviews" array (or review1_*, review2_*
+         ... flat keys for Notion). Any number of reviews works; the grid just grows.
+         Nothing is hardcoded here on purpose: these are real students' words, so the
+         only place they should come from is the file Julia controls. -->
     <section id="reviews">
       <div class="wrap">
         <span class="eyebrow">Reviews</span>
         <h2 data-cms="reviews_heading">What students say</h2>
-        <p class="lead" data-cms="reviews_intro">5.0 stars from 20 reviews on Preply.</p>
-        <div class="grid grid-2" style="margin-top:34px;">
-          <figure class="card review" style="margin:0;">
-            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote class="q" style="margin:10px 0 0;" data-cms="review1_quote">“Julia makes every lesson feel like chatting with a friend. My speaking improved so fast and I never felt nervous.”</blockquote>
-            <figcaption class="who"><span class="av" aria-hidden="true">L</span><span><b data-cms="review1_name">Lucas</b><small data-cms="review1_country">Germany</small></span></figcaption>
-          </figure>
-          <figure class="card review" style="margin:0;">
-            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote class="q" style="margin:10px 0 0;" data-cms="review2_quote">“The gentle corrections are the best part — I finally understand my mistakes without losing confidence.”</blockquote>
-            <figcaption class="who"><span class="av" aria-hidden="true">S</span><span><b data-cms="review2_name">Sophie</b><small data-cms="review2_country">France</small></span></figcaption>
-          </figure>
-          <figure class="card review" style="margin:0;">
-            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote class="q" style="margin:10px 0 0;" data-cms="review3_quote">“Relaxed, patient and genuinely fun. Julia adapts to exactly what I need each week.”</blockquote>
-            <figcaption class="who"><span class="av" aria-hidden="true">M</span><span><b data-cms="review3_name">Michael</b><small data-cms="review3_country">United States</small></span></figcaption>
-          </figure>
-          <figure class="card review" style="margin:0;">
-            <div class="rs" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote class="q" style="margin:10px 0 0;" data-cms="review4_quote">“I booked a trial and stayed for months. The Brazilian expressions she teaches are gold.”</blockquote>
-            <figcaption class="who"><span class="av" aria-hidden="true">A</span><span><b data-cms="review4_name">Ana</b><small data-cms="review4_country">Spain</small></span></figcaption>
-          </figure>
-        </div>
+        <p class="lead" data-cms="reviews_intro">Every review below is from a real lesson on Preply.</p>
+        <div class="grid grid-2" id="reviewList" style="margin-top:34px;"></div>
+        <!-- Shown only while no reviews are in content.json yet. -->
+        <p id="reviewEmpty" class="lead" style="margin-top:24px;">
+          <a class="book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener">Read all reviews on Preply →</a>
+        </p>
+        <p style="margin-top:26px;">
+          <a class="btn btn-ghost book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener" id="allReviewsLink" hidden>See all reviews on Preply →</a>
+        </p>
       </div>
     </section>
 
@@ -374,6 +367,71 @@
     // ---- Tiny CMS loader: pull content.json (kept in sync with Notion) ----
     (function(){
       function set(sel, fn){ document.querySelectorAll(sel).forEach(fn); }
+
+      // Reviews come either as a "reviews" array (easiest to paste a whole batch
+      // into content.json) or as flat review1_*, review2_* ... keys, because a
+      // Notion database can only give us flat key/value rows. Either way we read
+      // until they run out, so adding a 21st review needs no code change.
+      function collectReviews(c){
+        if(Array.isArray(c.reviews)) return c.reviews.filter(function(r){ return r && r.quote; });
+        var out = [];
+        for(var i = 1; ; i++){
+          var q = c['review'+i+'_quote'];
+          if(q === undefined || q === null || String(q).trim() === '') break;
+          out.push({ quote:q, name:c['review'+i+'_name'], country:c['review'+i+'_country'],
+                     rating:c['review'+i+'_rating'], date:c['review'+i+'_date'] });
+        }
+        return out;
+      }
+
+      function renderReviews(c){
+        var list = document.getElementById('reviewList');
+        if(!list) return;
+        var reviews = collectReviews(c);
+        var empty = document.getElementById('reviewEmpty');
+        var allLink = document.getElementById('allReviewsLink');
+        if(!reviews.length) return;                       // keep the "read them on Preply" line
+        if(empty) empty.hidden = true;
+        if(allLink) allLink.hidden = false;
+
+        reviews.forEach(function(r){
+          var n = Math.max(1, Math.min(5, parseInt(r.rating, 10) || 5));
+          var name = (r.name && String(r.name).trim()) || 'Student';
+          var fig = document.createElement('figure');
+          fig.className = 'card review';
+          fig.style.margin = '0';
+
+          var stars = document.createElement('div');
+          stars.className = 'rs';
+          stars.setAttribute('aria-label', n + ' out of 5 stars');
+          stars.textContent = '★★★★★'.slice(0, n);
+          fig.appendChild(stars);
+
+          var q = document.createElement('blockquote');
+          q.className = 'q';
+          q.style.margin = '10px 0 0';
+          q.textContent = '“' + String(r.quote).replace(/^[“"]|[”"]$/g, '') + '”';
+          fig.appendChild(q);
+
+          var cap = document.createElement('figcaption');
+          cap.className = 'who';
+          var av = document.createElement('span');
+          av.className = 'av';
+          av.setAttribute('aria-hidden', 'true');
+          av.textContent = name.charAt(0).toUpperCase();
+          var who = document.createElement('span');
+          var b = document.createElement('b');
+          b.textContent = name;
+          who.appendChild(b);
+          var meta = [r.country, r.date].filter(function(x){ return x && String(x).trim(); }).join(' · ');
+          if(meta){ var s = document.createElement('small'); s.textContent = meta; who.appendChild(s); }
+          cap.appendChild(av); cap.appendChild(who);
+          fig.appendChild(cap);
+
+          list.appendChild(fig);
+        });
+      }
+
       fetch('content.json?v=' + Date.now())
         .then(function(r){ return r.ok ? r.json() : {}; })
         .then(function(c){
@@ -389,6 +447,7 @@
           });
           // Booking URL -> every button with .book-link
           if(c.booking_url){ set('.book-link', function(el){ el.setAttribute('href', c.booking_url); }); }
+          renderReviews(c);
           // Optional: swap the intro video if a new vimeo link is given
           if(c.video_url){
             var m = String(c.video_url).match(/vimeo\.com\/(\d+)(?:\/([a-z0-9]+))?/i);
