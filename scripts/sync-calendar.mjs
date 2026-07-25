@@ -112,8 +112,12 @@ const overlaps = (busy, start, end) => busy.some(([s, e]) => s < end && e > star
 /* ---------- slot building ------------------------------------------------ */
 
 function buildDays(busy, now) {
-  const { timezone, slotMinutes, daysAhead, minNoticeHours, workingHours } = CONFIG;
+  const { timezone, slotMinutes, minBlockMinutes, daysAhead, minNoticeHours, workingHours } = CONFIG;
   const slotMs = slotMinutes * MINUTE;
+  // A slot is only offered if the unbroken free run around it is at least this
+  // long, so a lone half-hour gap between two lessons is never bookable.
+  const minRun = Math.max(minBlockMinutes || slotMinutes, slotMinutes);
+  const minRunSlots = Math.ceil(minRun / slotMinutes);
   const earliest = now + (minNoticeHours || 0) * 60 * MINUTE;
   const days = [];
 
@@ -131,15 +135,26 @@ function buildDays(busy, now) {
       const windowStart = zonedToUtc(year, month, day, fh, fm, timezone);
       const windowEnd = zonedToUtc(year, month, day, th, tm, timezone);
 
-      // Step in whole slots: a slot is only offered if it fits entirely inside
-      // the working window AND is entirely free. That is the 30-minute minimum.
+      // Walk the window in whole slots, collecting unbroken runs of free ones.
+      // Anything before the notice cutoff counts as unavailable, so a run can
+      // never be padded out by time that is too soon to book anyway.
+      let run = [];
+      const flush = () => {
+        if (run.length >= minRunSlots) {
+          for (const s of run) {
+            slots.push(new Intl.DateTimeFormat('en-GB', {
+              timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false,
+            }).format(new Date(s)));
+          }
+        }
+        run = [];
+      };
+
       for (let s = windowStart; s + slotMs <= windowEnd; s += slotMs) {
-        if (s < earliest) continue;
-        if (overlaps(busy, s, s + slotMs)) continue;
-        slots.push(new Intl.DateTimeFormat('en-GB', {
-          timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false,
-        }).format(new Date(s)));
+        if (s < earliest || overlaps(busy, s, s + slotMs)) flush();
+        else run.push(s);
       }
+      flush();
     }
 
     if (slots.length) {

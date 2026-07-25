@@ -111,8 +111,10 @@ locations and guests are never touched, so nothing private can appear on the
 site. The published file lists when you are *free* — it doesn't even record
 when you are busy.
 
-A slot is offered only when the whole 30 minutes is free, so a 20-minute gap
-between two events never becomes bookable.
+Slots are 30 minutes, but one only appears if it sits inside an unbroken free
+run of at least an hour. A lone half-hour gap between two lessons is therefore
+never bookable, while a free hour offers both halves and 90 minutes offers
+three slots.
 
 ### Setup (once)
 
@@ -144,7 +146,10 @@ Edit `scripts/calendar-config.json` — no other file needs touching:
   or several ranges for a split day: `[["08:00","12:00"],["16:00","20:00"]]`.
 - `minNoticeHours` — hides slots that are too soon (default 12 hours).
 - `daysAhead` — how far ahead to publish (default 14 days).
-- `slotMinutes` — slot length, and therefore the minimum free gap (default 30).
+- `slotMinutes` — how long each bookable slot is (default 30).
+- `minBlockMinutes` — how much unbroken free time a slot needs around it before
+  it is offered (default 60). Set it equal to `slotMinutes` to offer every free
+  half hour again.
 
 Committing a change here re-runs the sync straight away.
 

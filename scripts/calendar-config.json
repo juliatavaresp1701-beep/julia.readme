@@ -1,11 +1,13 @@
 {
   "_comment": "Edit this file to change when you are bookable. Times are local to the timezone below, in 24h HH:MM. Use an empty list for a day off.",
+  "_slotRule": "Slots are slotMinutes long, but only show inside an unbroken free run of at least minBlockMinutes. So with 30/60: a lone free half hour is not offered, a free hour offers two slots, 90 minutes offers three.",
 
   "_calendarId": "Leave empty. Only used as a fallback if no GOOGLE_ICS_URL secret is set, and it requires making the calendar public - which exposes event titles to anyone. The secret keeps the calendar private and always wins.",
   "calendarId": "",
 
   "timezone": "America/Sao_Paulo",
   "slotMinutes": 30,
+  "minBlockMinutes": 60,
   "daysAhead": 14,
   "minNoticeHours": 12,
 
