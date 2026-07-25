@@ -1,0 +1,192 @@
+/**
+ * Reads a Google Calendar private iCal feed and writes availability.json.
+ *
+ * PRIVACY: only start/end instants are ever read from the calendar. Event
+ * titles, descriptions, locations and guests are never touched, so nothing
+ * identifying can leak into the published file. The output is a list of free
+ * slots - it does not even say when you are busy, only when you are not.
+ *
+ * A slot is offered only if the WHOLE slot is free, which is what gives the
+ * "must have at least half an hour" rule: a 20-minute gap between two events
+ * never produces a slot.
+ *
+ * Usage:  GOOGLE_ICS_URL="https://..." node scripts/sync-calendar.mjs
+ * A local .ics path also works in place of the URL, which is how the tests run.
+ */
+
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import ical from 'node-ical';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const CONFIG = JSON.parse(readFileSync(resolve(HERE, 'calendar-config.json'), 'utf8'));
+const OUT = resolve(HERE, '..', 'availability.json');
+
+const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const MINUTE = 60 * 1000;
+
+/* ---------- timezone helpers -------------------------------------------- */
+
+/** Milliseconds that `timeZone` is ahead of UTC at the given instant. */
+function tzOffset(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone, hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).formatToParts(date).reduce((acc, p) => (acc[p.type] = p.value, acc), {});
+  const asUTC = Date.UTC(
+    +parts.year, +parts.month - 1, +parts.day,
+    parts.hour === '24' ? 0 : +parts.hour, +parts.minute, +parts.second,
+  );
+  return asUTC - date.getTime();
+}
+
+/** The UTC instant of a wall-clock time in `timeZone`. */
+function zonedToUtc(y, m, d, hh, mm, timeZone) {
+  const naive = Date.UTC(y, m - 1, d, hh, mm);
+  let ts = naive;
+  // Two passes settle the offset even across a DST boundary.
+  for (let i = 0; i < 2; i++) ts = naive - tzOffset(new Date(ts), timeZone);
+  return ts;
+}
+
+/** Calendar date parts for an instant, as seen in `timeZone`. */
+function zonedParts(date, timeZone) {
+  const p = new Intl.DateTimeFormat('en-CA', {
+    timeZone, year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+  }).formatToParts(date).reduce((acc, x) => (acc[x.type] = x.value, acc), {});
+  return { year: +p.year, month: +p.month, day: +p.day };
+}
+
+/* ---------- busy intervals ---------------------------------------------- */
+
+/**
+ * Every busy interval overlapping [rangeStart, rangeEnd), including expanded
+ * recurring events. Events marked free/transparent or cancelled don't block.
+ */
+function busyIntervals(events, rangeStart, rangeEnd) {
+  const busy = [];
+
+  const add = (start, end) => {
+    const s = start.getTime(), e = end.getTime();
+    if (e > rangeStart && s < rangeEnd) busy.push([s, e]);
+  };
+
+  for (const ev of Object.values(events)) {
+    if (!ev || ev.type !== 'VEVENT') continue;
+    if (ev.status === 'CANCELLED') continue;
+    // "Free" events (Google's Show as: Free) are not a conflict.
+    if (String(ev.transparency).toUpperCase() === 'TRANSPARENT') continue;
+    if (!ev.start) continue;
+
+    const durationMs = ev.end ? ev.end.getTime() - ev.start.getTime() : 0;
+
+    if (ev.rrule) {
+      // Expand a little either side so an occurrence that starts before the
+      // window but runs into it is still counted.
+      const from = new Date(rangeStart - 24 * 60 * MINUTE);
+      const to = new Date(rangeEnd + 24 * 60 * MINUTE);
+      const skipped = new Set(
+        Object.values(ev.exdate || {}).map((d) => new Date(d).toDateString() + new Date(d).getTime()),
+      );
+      for (const occurrence of ev.rrule.between(from, to, true)) {
+        if (skipped.has(occurrence.toDateString() + occurrence.getTime())) continue;
+        add(occurrence, new Date(occurrence.getTime() + durationMs));
+      }
+      // A moved occurrence keeps its own times.
+      for (const override of Object.values(ev.recurrences || {})) {
+        if (override.status === 'CANCELLED') continue;
+        add(override.start, override.end || override.start);
+      }
+    } else {
+      add(ev.start, ev.end || ev.start);
+    }
+  }
+
+  return busy;
+}
+
+const overlaps = (busy, start, end) => busy.some(([s, e]) => s < end && e > start);
+
+/* ---------- slot building ------------------------------------------------ */
+
+function buildDays(busy, now) {
+  const { timezone, slotMinutes, daysAhead, minNoticeHours, workingHours } = CONFIG;
+  const slotMs = slotMinutes * MINUTE;
+  const earliest = now + (minNoticeHours || 0) * 60 * MINUTE;
+  const days = [];
+
+  for (let offset = 0; offset < daysAhead; offset++) {
+    const dayStart = new Date(now + offset * 24 * 60 * MINUTE);
+    const { year, month, day } = zonedParts(dayStart, timezone);
+    // Weekday as it falls in the target timezone, not the runner's.
+    const weekday = DAY_NAMES[new Date(zonedToUtc(year, month, day, 12, 0, timezone)).getUTCDay()];
+    const windows = workingHours[weekday] || [];
+    const slots = [];
+
+    for (const [from, to] of windows) {
+      const [fh, fm] = from.split(':').map(Number);
+      const [th, tm] = to.split(':').map(Number);
+      const windowStart = zonedToUtc(year, month, day, fh, fm, timezone);
+      const windowEnd = zonedToUtc(year, month, day, th, tm, timezone);
+
+      // Step in whole slots: a slot is only offered if it fits entirely inside
+      // the working window AND is entirely free. That is the 30-minute minimum.
+      for (let s = windowStart; s + slotMs <= windowEnd; s += slotMs) {
+        if (s < earliest) continue;
+        if (overlaps(busy, s, s + slotMs)) continue;
+        slots.push(new Intl.DateTimeFormat('en-GB', {
+          timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false,
+        }).format(new Date(s)));
+      }
+    }
+
+    if (slots.length) {
+      days.push({
+        date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+        slots,
+      });
+    }
+  }
+
+  return days;
+}
+
+/* ---------- main --------------------------------------------------------- */
+
+async function loadCalendar(source) {
+  if (/^https?:\/\//i.test(source)) {
+    const res = await fetch(source);
+    if (!res.ok) throw new Error(`Calendar feed returned HTTP ${res.status}`);
+    return ical.async.parseICS(await res.text());
+  }
+  return ical.async.parseICS(readFileSync(source, 'utf8'));
+}
+
+const source = process.env.GOOGLE_ICS_URL;
+if (!source) {
+  console.error('GOOGLE_ICS_URL is not set. Add it as a GitHub secret (see README).');
+  process.exit(1);
+}
+
+const now = Date.now();
+const rangeStart = now;
+const rangeEnd = now + CONFIG.daysAhead * 24 * 60 * MINUTE;
+
+const events = await loadCalendar(source);
+const busy = busyIntervals(events, rangeStart, rangeEnd);
+const days = buildDays(busy, now);
+
+const output = {
+  generated: new Date(now).toISOString(),
+  timezone: CONFIG.timezone,
+  slotMinutes: CONFIG.slotMinutes,
+  days,
+};
+
+writeFileSync(OUT, JSON.stringify(output, null, 2) + '\n');
+console.log(
+  `Wrote ${days.length} day(s), ${days.reduce((n, d) => n + d.slots.length, 0)} free slot(s), ` +
+  `from ${busy.length} busy interval(s).`,
+);

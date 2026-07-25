@@ -101,6 +101,60 @@ attachments use temporary links that expire, so host the PDF elsewhere:
 
 Leave it blank or `#` and the button shows "PDF coming soon" instead.
 
+## Availability from Google Calendar
+
+A GitHub Action reads your calendar every 30 minutes and writes the free
+30-minute slots into `availability.json`, which the Schedule section displays.
+
+**Only start and end times are ever read.** Event titles, descriptions,
+locations and guests are never touched, so nothing private can appear on the
+site. The published file lists when you are *free* — it doesn't even record
+when you are busy.
+
+A slot is offered only when the whole 30 minutes is free, so a 20-minute gap
+between two events never becomes bookable.
+
+### Setup (once)
+
+1. **Get the private calendar link**
+   Google Calendar → hover your calendar → `⋮` → **Settings and sharing** →
+   scroll to **Integrate calendar** → copy **Secret address in iCal format**
+   (it ends in `.ics`).
+
+   Keep this link private — anyone who has it can read that calendar. It goes
+   into GitHub Secrets below, which is encrypted and not visible in the repo.
+   If it ever leaks, click **Reset** beside it in Google Calendar.
+
+2. **Add it as a GitHub secret**
+   Repo → **Settings** → **Secrets and variables** → **Actions** →
+   **New repository secret** → name it exactly `GOOGLE_ICS_URL`, paste the link.
+
+3. **Run it**
+   **Actions** tab → *Sync availability from Google Calendar* → **Run workflow**.
+
+Until the secret exists the Action fails and `availability.json` stays empty —
+in which case the Free times block simply doesn't appear and the Preply button
+is unaffected.
+
+### Changing your bookable hours
+
+Edit `scripts/calendar-config.json` — no other file needs touching:
+
+- `workingHours` — the hours you're open, per weekday. Use `[]` for a day off,
+  or several ranges for a split day: `[["08:00","12:00"],["16:00","20:00"]]`.
+- `minNoticeHours` — hides slots that are too soon (default 12 hours).
+- `daysAhead` — how far ahead to publish (default 14 days).
+- `slotMinutes` — slot length, and therefore the minimum free gap (default 30).
+
+Committing a change here re-runs the sync straight away.
+
+### Keeping it honest
+
+Bookings still happen on Preply, and Preply doesn't write back to Google. If
+you accept a lesson on Preply, block that time in Google too — otherwise this
+calendar keeps advertising a slot you've already sold. The safest habit is to
+treat Google as the master and let it hold everything.
+
 ## Photos and the favicon
 
 Two images live in this repo:

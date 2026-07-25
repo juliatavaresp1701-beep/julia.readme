@@ -1,0 +1,11 @@
+{
+  "name": "julia-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-calendar": "node scripts/sync-calendar.mjs"
+  },
+  "dependencies": {
+    "node-ical": "^0.20.1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "_comment": "Edit this file to change when you are bookable. Times are local to the timezone below, in 24h HH:MM. Use an empty list for a day off.",
+
+  "timezone": "America/Sao_Paulo",
+  "slotMinutes": 30,
+  "daysAhead": 14,
+  "minNoticeHours": 12,
+
+  "workingHours": {
+    "monday":    [["08:00", "21:00"]],
+    "tuesday":   [["08:00", "21:00"]],
+    "wednesday": [["08:00", "21:00"]],
+    "thursday":  [["08:00", "21:00"]],
+    "friday":    [["08:00", "21:00"]],
+    "saturday":  [["09:00", "14:00"]],
+    "sunday":    []
+  }
+}

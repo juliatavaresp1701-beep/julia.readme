@@ -101,6 +101,17 @@
     .brazil .feature .ic svg{ width:23px; height:23px; }
     /* Inline icons that sit next to text (button, badge) track the text size. */
     .i{ width:1.05em; height:1.05em; flex:0 0 auto; }
+    .avail-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin:34px 0 16px; }
+    .avail-updated{ margin:0; color:var(--muted); font-size:.85rem; }
+    /* One column per day, scrolling sideways rather than squeezing the page. */
+    .avail-days{ display:grid; grid-auto-flow:column; grid-auto-columns:minmax(132px,1fr); gap:14px; overflow-x:auto; padding-bottom:8px; }
+    .avail-day{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:14px; }
+    .avail-day h4{ margin:0 0 2px; font-size:.95rem; }
+    .avail-day .dow{ display:block; color:var(--muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; }
+    .avail-slots{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .avail-slot{ background:var(--pink-soft); color:var(--pink-dark); border:0; border-radius:8px; font:inherit; font-size:.85rem; font-weight:600; padding:5px 9px; text-decoration:none; display:inline-block; }
+    .avail-slot:hover{ background:var(--pink); color:var(--pink-ink); }
+    .avail-foot{ margin:14px 0 0; color:var(--muted); font-size:.9rem; }
     .review .q{ color:var(--ink); font-size:1.02rem; }
     .review .who{ display:flex; align-items:center; gap:12px; margin-top:14px; }
     .review .av{ width:42px; height:42px; border-radius:50%; flex:0 0 auto; background:linear-gradient(135deg,var(--pink),var(--pink-hover)); color:var(--pink-ink); font-weight:800; display:flex; align-items:center; justify-content:center; }
@@ -364,6 +375,20 @@
           </div>
           <a class="btn btn-primary btn-big book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">See availability &amp; book</a>
         </div>
+
+        <!-- Free slots, rebuilt from Google Calendar by a GitHub Action.
+             Hidden entirely until availability.json has something to show. -->
+        <div id="availability" hidden>
+          <div class="avail-head">
+            <h3 style="margin:0;">Free times</h3>
+            <p id="availUpdated" class="avail-updated"></p>
+          </div>
+          <div class="avail-days" id="availDays"></div>
+          <p class="avail-foot">
+            Slots are 30 minutes and update automatically.
+            <a class="book-link" href="https://preply.com/en/tutor/7573352" target="_blank" rel="noopener noreferrer">Book on Preply →</a>
+          </p>
+        </div>
       </div>
     </section>
 
@@ -414,6 +439,68 @@
         else { img.remove(); if(fallback) fallback.hidden = false; }
       });
       img.src = sources[0];
+    })();
+
+    // ---- Free slots, from availability.json (rebuilt by the calendar Action) ----
+    // The file holds only free start times, never anything from the events
+    // themselves. If it is missing or empty the whole block stays hidden and
+    // the Preply button above remains the way to book.
+    (function(){
+      var wrap = document.getElementById('availability');
+      if(!wrap) return;
+      fetch('availability.json?v=' + Date.now())
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(data){
+          if(!data || !Array.isArray(data.days) || !data.days.length) return;
+          var host = document.getElementById('availDays');
+          var tz = data.timezone || 'America/Sao_Paulo';
+
+          data.days.forEach(function(day){
+            if(!day.slots || !day.slots.length) return;
+            // Parse as midday UTC so the date can't slip a day either way.
+            var d = new Date(day.date + 'T12:00:00Z');
+            var col = document.createElement('div');
+            col.className = 'avail-day';
+
+            var dow = document.createElement('span');
+            dow.className = 'dow';
+            dow.textContent = d.toLocaleDateString(undefined, { weekday:'short', timeZone:'UTC' });
+            var h = document.createElement('h4');
+            h.textContent = d.toLocaleDateString(undefined, { day:'numeric', month:'short', timeZone:'UTC' });
+            col.appendChild(dow); col.appendChild(h);
+
+            var slots = document.createElement('div');
+            slots.className = 'avail-slots';
+            day.slots.forEach(function(t){
+              var a = document.createElement('a');
+              a.className = 'avail-slot book-link';
+              a.href = 'https://preply.com/en/tutor/7573352';
+              a.target = '_blank'; a.rel = 'noopener noreferrer';
+              a.textContent = t;
+              slots.appendChild(a);
+            });
+            col.appendChild(slots);
+            host.appendChild(col);
+          });
+
+          if(!host.children.length) return;
+
+          var stamp = document.getElementById('availUpdated');
+          if(stamp && data.generated){
+            var when = new Date(data.generated);
+            stamp.textContent = 'Updated ' + when.toLocaleString(undefined, {
+              day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'
+            }) + ' · times in ' + tz.split('/').pop().replace(/_/g,' ');
+          }
+          wrap.hidden = false;
+          // Booking URL from content.json, if it loaded first, wins.
+          var booking = document.querySelector('.book-link[href]');
+          if(booking){
+            var url = booking.getAttribute('href');
+            wrap.querySelectorAll('.book-link').forEach(function(el){ el.setAttribute('href', url); });
+          }
+        })
+        .catch(function(){ /* no availability.json yet -> block stays hidden */ });
     })();
 
     // ---- Tiny CMS loader: pull content.json (kept in sync with Notion) ----
