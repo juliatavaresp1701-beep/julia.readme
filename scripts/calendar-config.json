@@ -1,6 +1,9 @@
 {
   "_comment": "Edit this file to change when you are bookable. Times are local to the timezone below, in 24h HH:MM. Use an empty list for a day off.",
 
+  "_calendarId": "Leave empty. Only used as a fallback if no GOOGLE_ICS_URL secret is set, and it requires making the calendar public - which exposes event titles to anyone. The secret keeps the calendar private and always wins.",
+  "calendarId": "",
+
   "timezone": "America/Sao_Paulo",
   "slotMinutes": 30,
   "daysAhead": 14,

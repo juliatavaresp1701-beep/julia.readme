@@ -164,11 +164,27 @@ async function loadCalendar(source) {
   return ical.async.parseICS(readFileSync(source, 'utf8'));
 }
 
-const source = process.env.GOOGLE_ICS_URL;
+/**
+ * Two ways to point at a calendar:
+ *
+ *  1. GOOGLE_ICS_URL secret - the "Secret address in iCal format". The calendar
+ *     stays private; only this Action can read it. Preferred, and it wins if set.
+ *  2. calendarId in calendar-config.json - builds the public .ics URL. Simpler,
+ *     but it only works if that calendar is shared publicly, and public means
+ *     anyone can read the events in it. Only use it for a calendar that holds
+ *     nothing but availability blocks.
+ */
+const source = process.env.GOOGLE_ICS_URL || (CONFIG.calendarId
+  ? `https://calendar.google.com/calendar/ical/${encodeURIComponent(CONFIG.calendarId)}/public/basic.ics`
+  : null);
+
 if (!source) {
-  console.error('GOOGLE_ICS_URL is not set. Add it as a GitHub secret (see README).');
+  console.error('No calendar configured: set the GOOGLE_ICS_URL secret, or calendarId in scripts/calendar-config.json.');
   process.exit(1);
 }
+console.log(process.env.GOOGLE_ICS_URL
+  ? 'Reading the private calendar feed from the GOOGLE_ICS_URL secret.'
+  : 'Reading the public feed for calendarId in calendar-config.json.');
 
 const now = Date.now();
 const rangeStart = now;
