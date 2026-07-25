@@ -3,7 +3,11 @@
 A static one-page site (GitHub Pages). The content comes from a Notion database,
 so Julia can edit the text without touching any code.
 
-**Live:** https://rubenkraan-droid.github.io/julia-portuguese/
+**Live:** https://juliatavaresp1701-beep.github.io/julia.readme/
+
+> First time only: GitHub → **Settings** → **Pages** → *Source* =
+> **Deploy from a branch**, *Branch* = `main` / `(root)` → **Save**.
+> The site is live a minute or two later.
 
 ## How it works
 
@@ -18,6 +22,11 @@ content.json  ──►  index.html loads this on every page view
 - `content.json` — the current text (updated automatically; don't edit by hand).
 - `scripts/sync-notion.js` — reads the Notion database and writes `content.json`.
 - `.github/workflows/sync-notion.yml` — runs the script on a schedule + on a button.
+
+> **Not set up in this repo yet.** The two sync files above are missing here, so
+> `content.json` currently only changes when it is edited by hand. The site
+> itself works fine either way. Everything below about Notion applies once the
+> sync is added.
 
 ## One-time setup (required for the sync to work)
 
