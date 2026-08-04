@@ -1,0 +1,283 @@
+[
+  {
+    "slug": "bandits",
+    "title": "Bandits",
+    "subtitle": "Salta, Argentina",
+    "images": [
+      {
+        "file": "bandits-1.jpg",
+        "w": 1280,
+        "h": 1706
+      },
+      {
+        "file": "bandits-2.jpg",
+        "w": 1280,
+        "h": 1706
+      },
+      {
+        "file": "bandits-3.jpg",
+        "w": 1280,
+        "h": 1706
+      },
+      {
+        "file": "bandits-4.jpg",
+        "w": 1280,
+        "h": 960
+      },
+      {
+        "file": "bandits-5.jpg",
+        "w": 1280,
+        "h": 960
+      },
+      {
+        "file": "bandits-6.jpg",
+        "w": 1280,
+        "h": 959
+      },
+      {
+        "file": "bandits-7.jpg",
+        "w": 1280,
+        "h": 1706
+      },
+      {
+        "file": "bandits-8.jpg",
+        "w": 1280,
+        "h": 1706
+      }
+    ]
+  },
+  {
+    "slug": "charros",
+    "title": "Charros",
+    "subtitle": "Jalisco, Mexico",
+    "images": [
+      {
+        "file": "charros-1.jpg",
+        "w": 1201,
+        "h": 1800
+      },
+      {
+        "file": "charros-2.jpg",
+        "w": 1201,
+        "h": 1800
+      },
+      {
+        "file": "charros-3.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "charros-4.jpg",
+        "w": 1280,
+        "h": 853
+      },
+      {
+        "file": "charros-5.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "charros-6.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "charros-7.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "charros-8.jpg",
+        "w": 1280,
+        "h": 853
+      }
+    ]
+  },
+  {
+    "slug": "back-forty",
+    "title": "Back Forty",
+    "subtitle": "Private Ranch",
+    "images": [
+      {
+        "file": "back-forty-1.jpg",
+        "w": 1600,
+        "h": 1067
+      },
+      {
+        "file": "back-forty-2.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "back-forty-3.jpg",
+        "w": 1600,
+        "h": 1067
+      },
+      {
+        "file": "back-forty-4.jpg",
+        "w": 1600,
+        "h": 1067
+      },
+      {
+        "file": "back-forty-5.jpg",
+        "w": 1600,
+        "h": 1067
+      },
+      {
+        "file": "back-forty-6.jpg",
+        "w": 1600,
+        "h": 1067
+      }
+    ]
+  },
+  {
+    "slug": "off-grid",
+    "title": "Off Grid",
+    "subtitle": "Lewis Ferris",
+    "images": [
+      {
+        "file": "off-grid-1.jpg",
+        "w": 1280,
+        "h": 853
+      },
+      {
+        "file": "off-grid-2.jpg",
+        "w": 1280,
+        "h": 853
+      }
+    ]
+  },
+  {
+    "slug": "deep-end",
+    "title": "Deep End",
+    "subtitle": "Studio",
+    "images": [
+      {
+        "file": "deep-end-1.jpg",
+        "w": 1280,
+        "h": 1600
+      }
+    ]
+  },
+  {
+    "slug": "dive-bar",
+    "title": "Dive Bar",
+    "subtitle": "Agustin Farias",
+    "images": [
+      {
+        "file": "dive-bar-1.jpg",
+        "w": 1280,
+        "h": 960
+      }
+    ]
+  },
+  {
+    "slug": "static",
+    "title": "Static",
+    "subtitle": "Ivan Resnik",
+    "images": [
+      {
+        "file": "static-1.jpg",
+        "w": 1201,
+        "h": 1800
+      },
+      {
+        "file": "static-2.jpg",
+        "w": 1600,
+        "h": 1067
+      }
+    ]
+  },
+  {
+    "slug": "hang-in-there",
+    "title": "Hang In There",
+    "subtitle": "Cecilia Di Paolo",
+    "images": [
+      {
+        "file": "hang-in-there-1.jpg",
+        "w": 1201,
+        "h": 1800
+      }
+    ]
+  },
+  {
+    "slug": "soft-landing",
+    "title": "Soft Landing",
+    "subtitle": "Chris Abatzis",
+    "images": [
+      {
+        "file": "soft-landing-1.jpg",
+        "w": 1600,
+        "h": 1078
+      },
+      {
+        "file": "soft-landing-2.jpg",
+        "w": 1213,
+        "h": 1800
+      },
+      {
+        "file": "soft-landing-3.jpg",
+        "w": 1202,
+        "h": 1800
+      },
+      {
+        "file": "soft-landing-4.jpg",
+        "w": 1202,
+        "h": 1800
+      }
+    ]
+  },
+  {
+    "slug": "tones",
+    "title": "Tones",
+    "subtitle": "Chris Abatzis",
+    "images": [
+      {
+        "file": "tones-1.jpg",
+        "w": 1202,
+        "h": 1800
+      }
+    ]
+  },
+  {
+    "slug": "another-planet",
+    "title": "Another Planet",
+    "subtitle": "Field Study",
+    "images": [
+      {
+        "file": "another-planet-1.jpg",
+        "w": 1200,
+        "h": 1800
+      }
+    ]
+  },
+  {
+    "slug": "silhouette",
+    "title": "Silhouette",
+    "subtitle": "Grant Spanier",
+    "images": [
+      {
+        "file": "silhouette-1.jpg",
+        "w": 1280,
+        "h": 857
+      }
+    ]
+  },
+  {
+    "slug": "kin",
+    "title": "Kin",
+    "subtitle": "Nick Fancher",
+    "images": [
+      {
+        "file": "kin-1.jpg",
+        "w": 1200,
+        "h": 1800
+      },
+      {
+        "file": "kin-2.jpg",
+        "w": 1600,
+        "h": 1067
+      }
+    ]
+  }
+]

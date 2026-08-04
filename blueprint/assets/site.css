@@ -1,0 +1,681 @@
+/* Blueprint — modern Lay Theme vibe: grid, typography, whitespace. */
+
+:root {
+  --paper: #f7f5f1;
+  --ink: #0e0e0e;
+  --clay: #b5562f;
+  --rule: rgba(14, 14, 14, 0.14);
+  --muted: rgba(14, 14, 14, 0.5);
+
+  --grotesk: "Helvetica Neue", Inter, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --gutter: 2px;
+  --chrome: 4.5rem;
+  --pad: clamp(1rem, 3.5vw, 2.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--grotesk);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+figure {
+  margin: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Small mono label — used for counters, kickers, index numbers. */
+.label {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+.chrome {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--chrome);
+  padding: 0 var(--pad);
+  mix-blend-mode: difference;
+  color: #fff;
+  pointer-events: none;
+}
+
+.chrome a,
+.chrome button {
+  pointer-events: auto;
+}
+
+.chrome__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.chrome__menu {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.chrome__menu:hover {
+  opacity: 0.6;
+}
+
+/* Running frame counter — quiet, bottom-left, above everything. Blended so
+   it stays legible whether it sits on paper or on a full-bleed photo. */
+.counter {
+  position: fixed;
+  left: var(--pad);
+  bottom: 1.25rem;
+  z-index: 35;
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------- homepage */
+
+.intro {
+  padding: calc(var(--chrome) + 16vh) var(--pad) 14vh;
+  max-width: 60rem;
+}
+
+.intro__kicker {
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
+
+.intro__lede {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.6vw, 2.75rem);
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+/* Element Grid — masonry, 4 columns desktop, 2px gutter, edge to edge.
+   CSS columns is the no-JS fallback; site.js upgrades this to real
+   shortest-column packing, which keeps the bottom edge from going ragged. */
+.grid {
+  columns: 4;
+  column-gap: var(--gutter);
+  padding: 0;
+}
+
+.grid--packed {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gutter);
+  columns: auto;
+}
+
+.grid__col {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--gutter);
+}
+
+.grid--packed .tile {
+  margin-bottom: 0;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  break-inside: avoid;
+  margin-bottom: var(--gutter);
+  background: rgba(14, 14, 14, 0.06);
+  overflow: hidden;
+}
+
+.tile img {
+  width: 100%;
+  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tile:hover img {
+  transform: scale(1.02);
+}
+
+/* Caption on image, bottom-left, mouseover only, subtle bottom-third wash. */
+.tile__cap {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 3.5rem 1rem 0.9rem;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.tile:hover .tile__cap,
+.tile:focus-visible .tile__cap {
+  opacity: 1;
+}
+
+.tile__title {
+  display: block;
+  font-size: 0.9375rem;
+  letter-spacing: 0.01em;
+}
+
+.tile__sub {
+  display: block;
+  margin-top: 0.15rem;
+  opacity: 0.72;
+}
+
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  padding: 6rem var(--pad) 5rem;
+  color: var(--muted);
+}
+
+.colophon a:hover {
+  color: var(--clay);
+}
+
+/* --------------------------------------------------------- project page */
+
+.hero {
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  align-items: baseline;
+  padding: 3rem var(--pad);
+  border-bottom: 1px solid var(--rule);
+}
+
+.project__num {
+  color: var(--muted);
+}
+
+.project__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.project__sub {
+  color: var(--muted);
+}
+
+.frames {
+  padding: 12vh 0 6vh;
+}
+
+.frame {
+  margin: 0 auto 14vh;
+  padding: 0 var(--pad);
+  max-width: 72rem;
+  text-align: center;
+}
+
+.frame:last-child {
+  margin-bottom: 0;
+}
+
+/* Shrink-wraps the image so the caption sits on its left edge, not the
+   row's. */
+.frame__inner {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.frame img {
+  max-height: 88vh;
+  width: auto;
+}
+
+.frame--zoomable img {
+  cursor: zoom-in;
+}
+
+.frame__cap {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  text-align: left;
+}
+
+.next {
+  display: block;
+  padding: 8vh var(--pad) 10vh;
+  border-top: 1px solid var(--rule);
+}
+
+.next__label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.next__title {
+  font-size: clamp(2rem, 7vw, 4.5rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  transition: color 200ms ease;
+}
+
+.next:hover .next__title {
+  color: var(--clay);
+}
+
+/* Scroll animation — used sparingly, one fade-up per element. */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ------------------------------------------------------------- overlay */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 4rem;
+  padding: calc(var(--chrome) + 2rem) var(--pad) var(--pad);
+  background: var(--ink);
+  color: var(--paper);
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 320ms ease, visibility 0s linear 320ms;
+}
+
+/* Both columns must be allowed to shrink, or the marquee's max-content
+   track widens the grid and pushes the page sideways. */
+.overlay > * {
+  min-width: 0;
+}
+
+.overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 320ms ease, visibility 0s;
+}
+
+.overlay__close {
+  position: fixed;
+  top: 1.25rem;
+  right: var(--pad);
+  appearance: none;
+  border: 0;
+  padding: 0.25rem;
+  background: none;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.overlay__close:hover {
+  color: var(--clay);
+}
+
+/* Project index — sortable text list of all projects. */
+.index__head,
+.index__row {
+  display: grid;
+  grid-template-columns: 3rem 1fr 1fr 4rem;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(247, 245, 241, 0.16);
+}
+
+.index__head {
+  color: rgba(247, 245, 241, 0.45);
+  border-bottom-color: rgba(247, 245, 241, 0.35);
+}
+
+.index__sort {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.index__sort:hover,
+.index__sort[aria-sort]:not([aria-sort="none"]) {
+  color: var(--clay);
+}
+
+.index__row {
+  align-items: baseline;
+  transition: color 180ms ease;
+}
+
+.index__row:hover {
+  color: var(--clay);
+}
+
+.index__num,
+.index__meta,
+.index__frames {
+  color: rgba(247, 245, 241, 0.55);
+}
+
+.index__row:hover .index__num,
+.index__row:hover .index__meta,
+.index__row:hover .index__frames {
+  color: inherit;
+}
+
+.index__name {
+  font-size: 1.125rem;
+}
+
+.index__frames,
+.index__head .index__sort:last-child {
+  text-align: right;
+}
+
+.about p {
+  margin: 0 0 1.5rem;
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  color: rgba(247, 245, 241, 0.82);
+}
+
+.about h2 {
+  margin: 2.5rem 0 1rem;
+  color: rgba(247, 245, 241, 0.45);
+  font-weight: 400;
+}
+
+.about a:hover {
+  color: var(--clay);
+}
+
+.social {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* Marquee — selected press, running left. */
+.marquee {
+  overflow: hidden;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(247, 245, 241, 0.16);
+  border-bottom: 1px solid rgba(247, 245, 241, 0.16);
+  padding: 0.75rem 0;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee__track span {
+  padding-right: 2.5rem;
+  color: rgba(247, 245, 241, 0.6);
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ------------------------------------------------------------ lightbox */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 260ms ease, visibility 0s linear 260ms;
+}
+
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 260ms ease, visibility 0s;
+}
+
+.lightbox img {
+  max-width: 92vw;
+  max-height: 86vh;
+  width: auto;
+  height: auto;
+}
+
+.lightbox__cap,
+.lightbox__count {
+  position: fixed;
+  bottom: 1.25rem;
+  color: rgba(247, 245, 241, 0.55);
+}
+
+.lightbox__cap {
+  left: var(--pad);
+}
+
+.lightbox__count {
+  right: var(--pad);
+}
+
+.lightbox__nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  appearance: none;
+  border: 0;
+  padding: 1rem;
+  background: none;
+  color: rgba(247, 245, 241, 0.6);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.lightbox__nav:hover {
+  color: var(--paper);
+}
+
+.lightbox__prev {
+  left: calc(var(--pad) / 2);
+}
+
+.lightbox__next {
+  right: calc(var(--pad) / 2);
+}
+
+.lightbox__close {
+  position: fixed;
+  top: 1.25rem;
+  right: var(--pad);
+  appearance: none;
+  border: 0;
+  padding: 0.25rem;
+  background: none;
+  color: rgba(247, 245, 241, 0.6);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox__close:hover {
+  color: var(--paper);
+}
+
+/* ------------------------------------------------- page transitions */
+
+body {
+  opacity: 1;
+  transition: opacity 260ms ease;
+}
+
+body.is-leaving {
+  opacity: 0;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 1100px) {
+  .grid {
+    columns: 3;
+  }
+  .overlay {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 780px) {
+  :root {
+    --chrome: 3.5rem;
+  }
+  .grid {
+    columns: 2;
+  }
+  .intro {
+    padding-top: calc(var(--chrome) + 10vh);
+    padding-bottom: 8vh;
+  }
+  .frames {
+    padding-top: 8vh;
+  }
+  .frame {
+    margin-bottom: 8vh;
+  }
+  .frame img {
+    max-height: none;
+    width: 100%;
+  }
+  .index__head,
+  .index__row {
+    grid-template-columns: 2rem 1fr 3rem;
+  }
+  /* Drop the location column and its sort button together, or the header
+     wraps onto a second line. */
+  .index__meta,
+  .index__head .index__sort:nth-child(3) {
+    display: none;
+  }
+  /* Lightbox is off on phone — the scroll sequence is the lightbox here. */
+  .frame--zoomable img {
+    cursor: default;
+  }
+  /* Captions read as static on touch, since there is no hover. */
+  .tile__cap {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 460px) {
+  .grid {
+    columns: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
