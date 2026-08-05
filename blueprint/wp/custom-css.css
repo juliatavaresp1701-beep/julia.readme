@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Bandits — Custom CSS for Lay Theme
+   Paste the whole file into Customizing -> CSS.
+   ==========================================================================
+
+   This version does NOT guess at Lay Theme's own class names. It hooks onto
+   the body classes WordPress puts on every page (`home`, `single-project`),
+   which are the same in every theme and every version. So it keeps working
+   after theme updates.
+
+   What CSS can do here: colour, type, and the hover behaviour.
+   What it cannot do: the grid's columns and gaps. The Gridder positions
+   elements itself, so those come from dragging tiles and from the % fields
+   in the Gridder toolbar — not from here. Don't fight it with CSS.
+   ========================================================================== */
+
+/* --------------------------------------------------------- 1. The ground */
+
+body {
+  background: #ffffff;
+  color: #0e0e0e;
+}
+
+/* --------------------------------------------------- 2. Hover on the wall
+
+   Hovering one photograph dims the others, instead of showing a caption.
+   This is the whole interaction on the homepage.
+
+   It uses :has(), so it needs a current browser. Where that is missing,
+   nothing dims and the grid still works — no broken state. */
+
+body.home a img {
+  transition: opacity 260ms ease;
+}
+
+body.home:has(a:hover) a img {
+  opacity: 0.45;
+}
+
+body.home a:hover img {
+  opacity: 1;
+}
+
+/* Touch screens have no hover, so nothing should dim. */
+@media (hover: none) {
+  body.home:has(a:hover) a img {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------ 3. The site title
+
+   Small, uppercase and quiet in the corner, rather than a large heading.
+   Several selectors are grouped because the theme's own name for this
+   element is not knowable from here — the one that matches wins, the rest
+   are ignored harmlessly. */
+
+.site-title,
+#site-title,
+h1.site-title,
+.lay-site-title,
+#lay-site-title {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+}
+
+/* ------------------------------------------------------- 4. Small labels
+
+   The kicker above the intro line — mono, small, wide-tracked. Add the
+   class `kicker` to that text element in the Gridder, or delete this block
+   if you would rather style it in the Gridder's own text settings. */
+
+.kicker {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------- 5. Link tone
+
+   The one accent colour, spent only on hover and active states. */
+
+a:hover {
+  color: #b5562f;
+}
+
+/* ------------------------------------------------ 6. Project page frames
+
+   Generous space between photographs as you scroll a project. Only applies
+   on single project pages, never the homepage grid. */
+
+body.single-project img {
+  margin-bottom: 6vh;
+}
