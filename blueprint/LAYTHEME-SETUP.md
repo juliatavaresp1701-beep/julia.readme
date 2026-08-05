@@ -240,3 +240,88 @@ POST_TYPE=project ./wp/import-projects.sh /path/to/blueprint/images/full
 That imports all 38 photos and creates all 13 projects with their featured
 images set. Steps 6–11 still have to be done by hand — that part is Gridder
 work, and there is no way around it.
+
+---
+
+## Appendix — what goes in each project, in order
+
+Generated from `manifest.json`. Frame 1 is the hero **and** the Project
+Thumbnail; the rest stack below it in this order.
+
+**01. Bandits** — Salta, Argentina · slug `bandits` · 8 frames
+
+1. `bandits-1.jpg`  ← hero + thumbnail
+2. `bandits-2.jpg`
+3. `bandits-3.jpg`
+4. `bandits-4.jpg`
+5. `bandits-5.jpg`
+6. `bandits-6.jpg`
+7. `bandits-7.jpg`
+8. `bandits-8.jpg`
+
+**02. Charros** — Jalisco, Mexico · slug `charros` · 8 frames
+
+1. `charros-1.jpg`  ← hero + thumbnail
+2. `charros-2.jpg`
+3. `charros-3.jpg`
+4. `charros-4.jpg`
+5. `charros-5.jpg`
+6. `charros-6.jpg`
+7. `charros-7.jpg`
+8. `charros-8.jpg`
+
+**03. Back Forty** — Private Ranch · slug `back-forty` · 6 frames
+
+1. `back-forty-1.jpg`  ← hero + thumbnail
+2. `back-forty-2.jpg`
+3. `back-forty-3.jpg`
+4. `back-forty-4.jpg`
+5. `back-forty-5.jpg`
+6. `back-forty-6.jpg`
+
+**04. Off Grid** — Lewis Ferris · slug `off-grid` · 2 frames
+
+1. `off-grid-1.jpg`  ← hero + thumbnail
+2. `off-grid-2.jpg`
+
+**05. Deep End** — Studio · slug `deep-end` · 1 frame
+
+1. `deep-end-1.jpg`  ← hero + thumbnail
+
+**06. Dive Bar** — Agustin Farias · slug `dive-bar` · 1 frame
+
+1. `dive-bar-1.jpg`  ← hero + thumbnail
+
+**07. Static** — Ivan Resnik · slug `static` · 2 frames
+
+1. `static-1.jpg`  ← hero + thumbnail
+2. `static-2.jpg`
+
+**08. Hang In There** — Cecilia Di Paolo · slug `hang-in-there` · 1 frame
+
+1. `hang-in-there-1.jpg`  ← hero + thumbnail
+
+**09. Soft Landing** — Chris Abatzis · slug `soft-landing` · 4 frames
+
+1. `soft-landing-1.jpg`  ← hero + thumbnail
+2. `soft-landing-2.jpg`
+3. `soft-landing-3.jpg`
+4. `soft-landing-4.jpg`
+
+**10. Tones** — Chris Abatzis · slug `tones` · 1 frame
+
+1. `tones-1.jpg`  ← hero + thumbnail
+
+**11. Another Planet** — Field Study · slug `another-planet` · 1 frame
+
+1. `another-planet-1.jpg`  ← hero + thumbnail
+
+**12. Silhouette** — Grant Spanier · slug `silhouette` · 1 frame
+
+1. `silhouette-1.jpg`  ← hero + thumbnail
+
+**13. Kin** — Nick Fancher · slug `kin` · 2 frames
+
+1. `kin-1.jpg`  ← hero + thumbnail
+2. `kin-2.jpg`
+
