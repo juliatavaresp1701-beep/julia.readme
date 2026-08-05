@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 const root = dirname(fileURLToPath(import.meta.url));
 
 const SITE = {
-  title: "Blueprint",
+  title: "Bandits",
   kicker: "Selected work — 2019–2026",
   lede:
     "A documentary practice following the roads, ranches and rodeo circuits of the Americas.",
@@ -270,7 +270,11 @@ ${sequenceHtml ? `\n  <div class="frames">\n${sequenceHtml}\n  </div>\n` : ""}
 
   const html = page(
     {
-      title: `${project.title} — ${SITE.title}`,
+      /* The site and a project can share a name — don't title it "X — X". */
+      title:
+        project.title === SITE.title
+          ? project.title
+          : `${project.title} — ${SITE.title}`,
       description: `${project.title}, ${project.subtitle} — ${project.images.length} frames.`,
       main,
       lightbox: true,
