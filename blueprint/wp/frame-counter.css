@@ -1,0 +1,26 @@
+/* Blueprint — frame counter for LayTheme.
+   Paste into Lay Options -> Custom CSS (or Customizer -> Custom CSS).
+   The JS that updates the number lives in frame-counter.js. */
+
+#blueprint-counter {
+  position: fixed;
+  left: 2.5rem;
+  bottom: 1.25rem;
+  z-index: 9999;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* Blended so it stays readable over both the background and a photo. */
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+@media (max-width: 780px) {
+  #blueprint-counter {
+    left: 1rem;
+  }
+}

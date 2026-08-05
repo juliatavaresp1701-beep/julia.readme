@@ -30,6 +30,8 @@ blueprint/
 ├── assets/site.css    all styling
 ├── assets/site.js     grid packing, overlay, lightbox, counter, transitions
 ├── images/full/       38 photographs (longest edge ≤1800px)
+├── wp/                for the LayTheme build — import script, counter snippet
+├── LAYTHEME-SETUP.md  click-by-click setup guide for LayTheme/WordPress
 └── LAYTHEME-SPEC.md   the original WordPress/LayTheme build spec
 ```
 
