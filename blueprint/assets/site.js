@@ -7,62 +7,6 @@
     return String(n).padStart(2, "0");
   };
 
-  /* --------------------------------------------- element grid (masonry) */
-
-  var grid = document.querySelector("[data-grid]");
-
-  if (grid) {
-    /* Original order, captured once — tiles get moved between columns. */
-    var tiles = Array.prototype.slice.call(grid.querySelectorAll(".tile"));
-    var columnCount = 0;
-
-    var columnsFor = function (width) {
-      if (width <= 460) return 1;
-      if (width <= 780) return 2;
-      if (width <= 1100) return 3;
-      return 4;
-    };
-
-    var packGrid = function () {
-      var wanted = columnsFor(window.innerWidth);
-      if (wanted === columnCount) return;
-      columnCount = wanted;
-
-      var columns = [];
-      var heights = [];
-
-      for (var i = 0; i < wanted; i++) {
-        var column = document.createElement("div");
-        column.className = "grid__col";
-        columns.push(column);
-        heights.push(0);
-      }
-
-      /* Place each tile in the shortest column, left to right, so the
-         reading order survives and the bottom edge stays even. Ratios come
-         from the manifest dimensions, so no image measuring is needed. */
-      tiles.forEach(function (tile) {
-        var shortest = heights.indexOf(Math.min.apply(null, heights));
-        columns[shortest].appendChild(tile);
-        heights[shortest] += Number(tile.dataset.ratio) || 1;
-      });
-
-      grid.textContent = "";
-      columns.forEach(function (column) {
-        grid.appendChild(column);
-      });
-      grid.classList.add("grid--packed");
-    };
-
-    packGrid();
-
-    var resizeTimer;
-    window.addEventListener("resize", function () {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(packGrid, 150);
-    });
-  }
-
   /* ------------------------------------------------- page overlay (index) */
 
   var overlay = document.querySelector("[data-overlay]");

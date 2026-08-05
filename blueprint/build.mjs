@@ -166,21 +166,23 @@ ${body.data ? `<script>window.BLUEPRINT = ${body.data};</script>` : ""}
 
 /* ------------------------------------------------------------- homepage */
 
+/* An archive wall: every frame, not one cover per project. At eight narrow
+   columns, thirteen tiles would read as an empty page — the density is the
+   point. Each frame links to the project it belongs to. */
+let tileIndex = 0;
 const tiles = manifest
-  .map((project, i) => {
-    const cover = project.images[0];
-    return `  <a class="tile" href="projects/${project.slug}.html" data-ratio="${(
-      cover.h / cover.w
-    ).toFixed(4)}">
-    <img src="images/full/${cover.file}" width="${cover.w}" height="${cover.h}"
-         loading="${i < 4 ? "eager" : "lazy"}" decoding="async"
+  .flatMap((project) =>
+    project.images.map((image) => {
+      const eager = tileIndex < 16;
+      tileIndex += 1;
+      return `  <a class="tile" href="projects/${project.slug}.html"
+     title="${esc(project.title)} — ${esc(project.subtitle)}">
+    <img src="images/thumbs/${image.file}" width="${image.w}" height="${image.h}"
+         loading="${eager ? "eager" : "lazy"}" decoding="async"
          alt="${esc(project.title)} — ${esc(project.subtitle)}">
-    <span class="tile__cap">
-      <span class="tile__title">${esc(project.title)}</span>
-      <span class="tile__sub label">${esc(project.subtitle)}</span>
-    </span>
   </a>`;
-  })
+    })
+  )
   .join("\n");
 
 const home = page(
@@ -193,7 +195,7 @@ const home = page(
     <p class="intro__lede">${esc(SITE.lede)}</p>
   </section>
 
-  <div class="grid" data-grid>
+  <div class="grid">
 ${tiles}
   </div>
 

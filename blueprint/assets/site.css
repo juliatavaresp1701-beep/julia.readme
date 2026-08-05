@@ -1,7 +1,7 @@
 /* Blueprint — modern Lay Theme vibe: grid, typography, whitespace. */
 
 :root {
-  --paper: #f7f5f1;
+  --paper: #ffffff;
   --ink: #0e0e0e;
   --clay: #b5562f;
   --rule: rgba(14, 14, 14, 0.14);
@@ -11,7 +11,8 @@
     "Segoe UI", Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
-  --gutter: 2px;
+  --gutter: 20px;
+  --row-gap: 60px;
   --chrome: 4.5rem;
   --pad: clamp(1rem, 3.5vw, 2.5rem);
 }
@@ -138,78 +139,37 @@ a {
   text-wrap: balance;
 }
 
-/* Element Grid — masonry, 4 columns desktop, 2px gutter, edge to edge.
-   CSS columns is the no-JS fallback; site.js upgrades this to real
-   shortest-column packing, which keeps the bottom edge from going ragged. */
+/* Element Grid — an archive wall. Eight narrow columns, tight column gaps
+   against generous row gaps, every frame at its natural aspect ratio, no
+   captions. The density does the work. */
 .grid {
-  columns: 4;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  align-items: start;
   column-gap: var(--gutter);
-  padding: 0;
-}
-
-.grid--packed {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--gutter);
-  columns: auto;
-}
-
-.grid__col {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
-  flex-direction: column;
-  gap: var(--gutter);
-}
-
-.grid--packed .tile {
-  margin-bottom: 0;
+  row-gap: var(--row-gap);
+  padding: 0 var(--pad);
 }
 
 .tile {
-  position: relative;
   display: block;
-  break-inside: avoid;
-  margin-bottom: var(--gutter);
-  background: rgba(14, 14, 14, 0.06);
   overflow: hidden;
 }
 
 .tile img {
   width: 100%;
-  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.tile:hover img {
-  transform: scale(1.02);
-}
-
-/* Caption on image, bottom-left, mouseover only, subtle bottom-third wash. */
-.tile__cap {
-  position: absolute;
-  inset: auto 0 0 0;
-  padding: 3.5rem 1rem 0.9rem;
-  color: #fff;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
-  opacity: 0;
   transition: opacity 260ms ease;
 }
 
-.tile:hover .tile__cap,
-.tile:focus-visible .tile__cap {
+/* No caption, no zoom — hovering just brings the frame forward by letting
+   its neighbours recede. */
+.grid:hover .tile img {
+  opacity: 0.45;
+}
+
+.grid .tile:hover img,
+.grid .tile:focus-visible img {
   opacity: 1;
-}
-
-.tile__title {
-  display: block;
-  font-size: 0.9375rem;
-  letter-spacing: 0.01em;
-}
-
-.tile__sub {
-  display: block;
-  margin-top: 0.15rem;
-  opacity: 0.72;
 }
 
 .colophon {
@@ -611,7 +571,7 @@ body.is-leaving {
 
 @media (max-width: 1100px) {
   .grid {
-    columns: 3;
+    grid-template-columns: repeat(6, 1fr);
   }
   .overlay {
     grid-template-columns: 1fr;
@@ -624,7 +584,7 @@ body.is-leaving {
     --chrome: 3.5rem;
   }
   .grid {
-    columns: 2;
+    grid-template-columns: repeat(4, 1fr);
   }
   .intro {
     padding-top: calc(var(--chrome) + 10vh);
@@ -654,15 +614,19 @@ body.is-leaving {
   .frame--zoomable img {
     cursor: default;
   }
-  /* Captions read as static on touch, since there is no hover. */
-  .tile__cap {
+  /* No hover on touch, so nothing should dim. */
+  .grid:hover .tile img {
     opacity: 1;
   }
 }
 
 @media (max-width: 460px) {
+  :root {
+    --gutter: 12px;
+    --row-gap: 32px;
+  }
   .grid {
-    columns: 1;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
