@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact sheet — Blueprint</title>
+<meta name="description" content="Every photograph with its filename, grouped by project, in placement order.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20width%3D'32'%20height%3D'32'%20fill%3D'%230e0e0e'%2F%3E%3Crect%20x%3D'7'%20y%3D'7'%20width%3D'7'%20height%3D'7'%20fill%3D'%23f7f5f1'%2F%3E%3Crect%20x%3D'18'%20y%3D'7'%20width%3D'7'%20height%3D'7'%20fill%3D'%23f7f5f1'%2F%3E%3Crect%20x%3D'7'%20y%3D'18'%20width%3D'7'%20height%3D'7'%20fill%3D'%23f7f5f1'%2F%3E%3Crect%20x%3D'18'%20y%3D'18'%20width%3D'7'%20height%3D'7'%20fill%3D'%23b5562f'%2F%3E%3C%2Fsvg%3E">
+<style>
+  :root {
+    --paper: #f7f5f1; --ink: #0e0e0e; --clay: #b5562f;
+    --rule: rgba(14,14,14,.14); --muted: rgba(14,14,14,.5);
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem clamp(1rem,3vw,2.5rem) 6rem;
+    background: var(--paper); color: var(--ink);
+    font-family: "Helvetica Neue", Inter, -apple-system, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header { max-width: 44rem; margin-bottom: 3rem; }
+  h1 { font-size: clamp(1.5rem,3.5vw,2.25rem); margin: 0 0 .75rem; letter-spacing: -.02em; }
+  header p { color: var(--muted); margin: 0 0 .5rem; line-height: 1.55; }
+  header a { color: var(--clay); }
+  .proj { margin-bottom: 3.5rem; }
+  .proj h2 {
+    display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: baseline;
+    margin: 0 0 1rem; padding-bottom: .6rem;
+    border-bottom: 1px solid var(--rule); font-size: 1rem; font-weight: 500;
+  }
+  .proj__num, .proj__sub, .proj__count {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .proj__title { font-size: 1.375rem; letter-spacing: -.01em; }
+  .proj__count { margin-left: auto; }
+  .cells {
+    display: grid; gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  figure.cell { margin: 0; }
+  .cell img {
+    display: block; width: 100%; height: auto;
+    background: rgba(14,14,14,.06);
+    border: 1px solid var(--rule);
+  }
+  .cell figcaption { margin-top: .5rem; }
+  .cell__file, .cell__role {
+    display: block; font-family: var(--mono); font-size: .6875rem;
+    line-height: 1.5; word-break: break-all;
+  }
+  .cell__file { user-select: all; }
+  .cell__role { color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .cell:first-child .cell__role { color: var(--clay); }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #0e0e0e; --ink: #f7f5f1; --rule: rgba(247,245,241,.18); --muted: rgba(247,245,241,.5); }
+    .cell img { background: rgba(247,245,241,.06); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Contact sheet</h1>
+  <p>Every photograph with its filename, grouped by project, in the order it
+     goes into the layout. The first frame of each project is both the hero
+     image and the Project Thumbnail.</p>
+  <p>Click a filename to select it. <a href="index.html">Back to the site</a></p>
+</header>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">01</span>
+      <span class="proj__title">Bandits</span>
+      <span class="proj__sub">Salta, Argentina</span>
+      <span class="proj__count">8 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/bandits-1.jpg" width="1280" height="1706"
+             loading="lazy" decoding="async" alt="Bandits frame 01">
+        <figcaption>
+          <span class="cell__file">bandits-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-2.jpg" width="1280" height="1706"
+             loading="lazy" decoding="async" alt="Bandits frame 02">
+        <figcaption>
+          <span class="cell__file">bandits-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-3.jpg" width="1280" height="1706"
+             loading="lazy" decoding="async" alt="Bandits frame 03">
+        <figcaption>
+          <span class="cell__file">bandits-3.jpg</span>
+          <span class="cell__role">frame 03</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-4.jpg" width="1280" height="960"
+             loading="lazy" decoding="async" alt="Bandits frame 04">
+        <figcaption>
+          <span class="cell__file">bandits-4.jpg</span>
+          <span class="cell__role">frame 04</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-5.jpg" width="1280" height="960"
+             loading="lazy" decoding="async" alt="Bandits frame 05">
+        <figcaption>
+          <span class="cell__file">bandits-5.jpg</span>
+          <span class="cell__role">frame 05</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-6.jpg" width="1280" height="959"
+             loading="lazy" decoding="async" alt="Bandits frame 06">
+        <figcaption>
+          <span class="cell__file">bandits-6.jpg</span>
+          <span class="cell__role">frame 06</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-7.jpg" width="1280" height="1706"
+             loading="lazy" decoding="async" alt="Bandits frame 07">
+        <figcaption>
+          <span class="cell__file">bandits-7.jpg</span>
+          <span class="cell__role">frame 07</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/bandits-8.jpg" width="1280" height="1706"
+             loading="lazy" decoding="async" alt="Bandits frame 08">
+        <figcaption>
+          <span class="cell__file">bandits-8.jpg</span>
+          <span class="cell__role">frame 08</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">02</span>
+      <span class="proj__title">Charros</span>
+      <span class="proj__sub">Jalisco, Mexico</span>
+      <span class="proj__count">8 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/charros-1.jpg" width="1201" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 01">
+        <figcaption>
+          <span class="cell__file">charros-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-2.jpg" width="1201" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 02">
+        <figcaption>
+          <span class="cell__file">charros-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-3.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 03">
+        <figcaption>
+          <span class="cell__file">charros-3.jpg</span>
+          <span class="cell__role">frame 03</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-4.jpg" width="1280" height="853"
+             loading="lazy" decoding="async" alt="Charros frame 04">
+        <figcaption>
+          <span class="cell__file">charros-4.jpg</span>
+          <span class="cell__role">frame 04</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-5.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 05">
+        <figcaption>
+          <span class="cell__file">charros-5.jpg</span>
+          <span class="cell__role">frame 05</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-6.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 06">
+        <figcaption>
+          <span class="cell__file">charros-6.jpg</span>
+          <span class="cell__role">frame 06</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-7.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Charros frame 07">
+        <figcaption>
+          <span class="cell__file">charros-7.jpg</span>
+          <span class="cell__role">frame 07</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/charros-8.jpg" width="1280" height="853"
+             loading="lazy" decoding="async" alt="Charros frame 08">
+        <figcaption>
+          <span class="cell__file">charros-8.jpg</span>
+          <span class="cell__role">frame 08</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">03</span>
+      <span class="proj__title">Back Forty</span>
+      <span class="proj__sub">Private Ranch</span>
+      <span class="proj__count">6 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-1.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Back Forty frame 01">
+        <figcaption>
+          <span class="cell__file">back-forty-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-2.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Back Forty frame 02">
+        <figcaption>
+          <span class="cell__file">back-forty-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-3.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Back Forty frame 03">
+        <figcaption>
+          <span class="cell__file">back-forty-3.jpg</span>
+          <span class="cell__role">frame 03</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-4.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Back Forty frame 04">
+        <figcaption>
+          <span class="cell__file">back-forty-4.jpg</span>
+          <span class="cell__role">frame 04</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-5.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Back Forty frame 05">
+        <figcaption>
+          <span class="cell__file">back-forty-5.jpg</span>
+          <span class="cell__role">frame 05</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/back-forty-6.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Back Forty frame 06">
+        <figcaption>
+          <span class="cell__file">back-forty-6.jpg</span>
+          <span class="cell__role">frame 06</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">04</span>
+      <span class="proj__title">Off Grid</span>
+      <span class="proj__sub">Lewis Ferris</span>
+      <span class="proj__count">2 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/off-grid-1.jpg" width="1280" height="853"
+             loading="lazy" decoding="async" alt="Off Grid frame 01">
+        <figcaption>
+          <span class="cell__file">off-grid-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/off-grid-2.jpg" width="1280" height="853"
+             loading="lazy" decoding="async" alt="Off Grid frame 02">
+        <figcaption>
+          <span class="cell__file">off-grid-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">05</span>
+      <span class="proj__title">Deep End</span>
+      <span class="proj__sub">Studio</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/deep-end-1.jpg" width="1280" height="1600"
+             loading="lazy" decoding="async" alt="Deep End frame 01">
+        <figcaption>
+          <span class="cell__file">deep-end-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">06</span>
+      <span class="proj__title">Dive Bar</span>
+      <span class="proj__sub">Agustin Farias</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/dive-bar-1.jpg" width="1280" height="960"
+             loading="lazy" decoding="async" alt="Dive Bar frame 01">
+        <figcaption>
+          <span class="cell__file">dive-bar-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">07</span>
+      <span class="proj__title">Static</span>
+      <span class="proj__sub">Ivan Resnik</span>
+      <span class="proj__count">2 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/static-1.jpg" width="1201" height="1800"
+             loading="lazy" decoding="async" alt="Static frame 01">
+        <figcaption>
+          <span class="cell__file">static-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/static-2.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Static frame 02">
+        <figcaption>
+          <span class="cell__file">static-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">08</span>
+      <span class="proj__title">Hang In There</span>
+      <span class="proj__sub">Cecilia Di Paolo</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/hang-in-there-1.jpg" width="1201" height="1800"
+             loading="lazy" decoding="async" alt="Hang In There frame 01">
+        <figcaption>
+          <span class="cell__file">hang-in-there-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">09</span>
+      <span class="proj__title">Soft Landing</span>
+      <span class="proj__sub">Chris Abatzis</span>
+      <span class="proj__count">4 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/soft-landing-1.jpg" width="1600" height="1078"
+             loading="lazy" decoding="async" alt="Soft Landing frame 01">
+        <figcaption>
+          <span class="cell__file">soft-landing-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/soft-landing-2.jpg" width="1213" height="1800"
+             loading="lazy" decoding="async" alt="Soft Landing frame 02">
+        <figcaption>
+          <span class="cell__file">soft-landing-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/soft-landing-3.jpg" width="1202" height="1800"
+             loading="lazy" decoding="async" alt="Soft Landing frame 03">
+        <figcaption>
+          <span class="cell__file">soft-landing-3.jpg</span>
+          <span class="cell__role">frame 03</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/soft-landing-4.jpg" width="1202" height="1800"
+             loading="lazy" decoding="async" alt="Soft Landing frame 04">
+        <figcaption>
+          <span class="cell__file">soft-landing-4.jpg</span>
+          <span class="cell__role">frame 04</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">10</span>
+      <span class="proj__title">Tones</span>
+      <span class="proj__sub">Chris Abatzis</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/tones-1.jpg" width="1202" height="1800"
+             loading="lazy" decoding="async" alt="Tones frame 01">
+        <figcaption>
+          <span class="cell__file">tones-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">11</span>
+      <span class="proj__title">Another Planet</span>
+      <span class="proj__sub">Field Study</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/another-planet-1.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Another Planet frame 01">
+        <figcaption>
+          <span class="cell__file">another-planet-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">12</span>
+      <span class="proj__title">Silhouette</span>
+      <span class="proj__sub">Grant Spanier</span>
+      <span class="proj__count">1 frame</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/silhouette-1.jpg" width="1280" height="857"
+             loading="lazy" decoding="async" alt="Silhouette frame 01">
+        <figcaption>
+          <span class="cell__file">silhouette-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="proj">
+    <h2>
+      <span class="proj__num">13</span>
+      <span class="proj__title">Kin</span>
+      <span class="proj__sub">Nick Fancher</span>
+      <span class="proj__count">2 frames</span>
+    </h2>
+    <div class="cells">
+      <figure class="cell">
+        <img src="images/thumbs/kin-1.jpg" width="1200" height="1800"
+             loading="lazy" decoding="async" alt="Kin frame 01">
+        <figcaption>
+          <span class="cell__file">kin-1.jpg</span>
+          <span class="cell__role">hero + thumbnail</span>
+        </figcaption>
+      </figure>
+      <figure class="cell">
+        <img src="images/thumbs/kin-2.jpg" width="1600" height="1067"
+             loading="lazy" decoding="async" alt="Kin frame 02">
+        <figcaption>
+          <span class="cell__file">kin-2.jpg</span>
+          <span class="cell__role">frame 02</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+</body>
+</html>

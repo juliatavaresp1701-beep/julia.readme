@@ -26,6 +26,7 @@ blueprint/
 ├── build.mjs          generator — run after editing manifest.json or copy
 ├── manifest.json      13 projects / 38 frames, with dimensions
 ├── index.html         generated
+├── contact-sheet.html generated — every photo with its filename, by project
 ├── projects/*.html    generated, one per project
 ├── assets/site.css    all styling
 ├── assets/site.js     grid packing, overlay, lightbox, counter, transitions

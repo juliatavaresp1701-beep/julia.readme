@@ -280,6 +280,123 @@ ${sequenceHtml ? `\n  <div class="frames">\n${sequenceHtml}\n  </div>\n` : ""}
   await writeFile(join(root, "projects", `${project.slug}.html`), html);
 }
 
+/* ------------------------------------------------------- contact sheet */
+
+/* A visual index: every photograph with its filename, grouped by project and
+   in placement order. Meant to be kept open in a tab while building the
+   Gridder layouts, so you can tell which file is which photo. */
+const sheetProjects = manifest
+  .map((project, i) => {
+    const cells = project.images
+      .map(
+        (image, index) => `      <figure class="cell">
+        <img src="images/thumbs/${image.file}" width="${image.w}" height="${image.h}"
+             loading="lazy" decoding="async" alt="${esc(project.title)} frame ${pad(index + 1)}">
+        <figcaption>
+          <span class="cell__file">${image.file}</span>
+          <span class="cell__role">${
+            index === 0 ? "hero + thumbnail" : `frame ${pad(index + 1)}`
+          }</span>
+        </figcaption>
+      </figure>`
+      )
+      .join("\n");
+
+    return `  <section class="proj">
+    <h2>
+      <span class="proj__num">${pad(i + 1)}</span>
+      <span class="proj__title">${esc(project.title)}</span>
+      <span class="proj__sub">${esc(project.subtitle)}</span>
+      <span class="proj__count">${project.images.length} frame${
+        project.images.length > 1 ? "s" : ""
+      }</span>
+    </h2>
+    <div class="cells">
+${cells}
+    </div>
+  </section>`;
+  })
+  .join("\n\n");
+
+const contactSheet = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact sheet — ${esc(SITE.title)}</title>
+<meta name="description" content="Every photograph with its filename, grouped by project, in placement order.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="${favicon}">
+<style>
+  :root {
+    --paper: #f7f5f1; --ink: #0e0e0e; --clay: #b5562f;
+    --rule: rgba(14,14,14,.14); --muted: rgba(14,14,14,.5);
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem clamp(1rem,3vw,2.5rem) 6rem;
+    background: var(--paper); color: var(--ink);
+    font-family: "Helvetica Neue", Inter, -apple-system, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header { max-width: 44rem; margin-bottom: 3rem; }
+  h1 { font-size: clamp(1.5rem,3.5vw,2.25rem); margin: 0 0 .75rem; letter-spacing: -.02em; }
+  header p { color: var(--muted); margin: 0 0 .5rem; line-height: 1.55; }
+  header a { color: var(--clay); }
+  .proj { margin-bottom: 3.5rem; }
+  .proj h2 {
+    display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: baseline;
+    margin: 0 0 1rem; padding-bottom: .6rem;
+    border-bottom: 1px solid var(--rule); font-size: 1rem; font-weight: 500;
+  }
+  .proj__num, .proj__sub, .proj__count {
+    font-family: var(--mono); font-size: .6875rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .proj__title { font-size: 1.375rem; letter-spacing: -.01em; }
+  .proj__count { margin-left: auto; }
+  .cells {
+    display: grid; gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  figure.cell { margin: 0; }
+  .cell img {
+    display: block; width: 100%; height: auto;
+    background: rgba(14,14,14,.06);
+    border: 1px solid var(--rule);
+  }
+  .cell figcaption { margin-top: .5rem; }
+  .cell__file, .cell__role {
+    display: block; font-family: var(--mono); font-size: .6875rem;
+    line-height: 1.5; word-break: break-all;
+  }
+  .cell__file { user-select: all; }
+  .cell__role { color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .cell:first-child .cell__role { color: var(--clay); }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #0e0e0e; --ink: #f7f5f1; --rule: rgba(247,245,241,.18); --muted: rgba(247,245,241,.5); }
+    .cell img { background: rgba(247,245,241,.06); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Contact sheet</h1>
+  <p>Every photograph with its filename, grouped by project, in the order it
+     goes into the layout. The first frame of each project is both the hero
+     image and the Project Thumbnail.</p>
+  <p>Click a filename to select it. <a href="index.html">Back to the site</a></p>
+</header>
+
+${sheetProjects}
+
+</body>
+</html>
+`;
+
+await writeFile(join(root, "contact-sheet.html"), contactSheet);
+
 /* ------------------------------------------- WP-CLI import (for LayTheme) */
 
 /* Imports the same 38 photos and creates the 13 Projects in WordPress, so the

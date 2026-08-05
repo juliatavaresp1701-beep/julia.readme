@@ -13,6 +13,11 @@ https://juliatavaresp1701-beep.github.io/julia.readme/blueprint/
 Keep it open in a second tab while you build. Every value below is taken from
 it, so you are copying decisions, not making them.
 
+**Which photo is which file?** The contact sheet shows all 38 with their
+filenames, grouped by project and in placement order:
+
+https://juliatavaresp1701-beep.github.io/julia.readme/blueprint/contact-sheet.html
+
 ---
 
 ## Step 0 — Know which site you are on
