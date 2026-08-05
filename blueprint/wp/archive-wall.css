@@ -1,0 +1,49 @@
+/* Blueprint — archive wall spacing for LayTheme's Element Grid.
+ *
+ * Paste into Lay Options -> Custom CSS.
+ *
+ * Only needed if LayTheme's Gutter setting applies the same spacing to rows
+ * and columns. The reference look is tight columns (20px) against generous
+ * rows (60px), which is what gives the wall its rhythm.
+ *
+ * IMPORTANT — set the selector first. This file guesses at LayTheme's class
+ * names, and they change between versions. To find the real one: open your
+ * homepage, right click the grid -> Inspect, and look for the element that
+ * wraps all the tiles. Replace .lay-element-grid below with its class.
+ *
+ * If the grid turns out to be built with absolute positioning rather than CSS
+ * grid or flexbox, none of this will apply — in that case set the Gutter to
+ * 20px in the Element Grid settings and accept equal spacing on both axes.
+ * It is a small difference, and not worth fighting the theme over.
+ */
+
+.lay-element-grid {
+  row-gap: 60px !important;
+  column-gap: 20px !important;
+}
+
+/* No captions on the wall — the reference has none. Belt and braces, in case
+ * the Project Thumbnail settings still render a title node. */
+.lay-element-grid .lay-project-title,
+.lay-element-grid .lay-project-description {
+  display: none !important;
+}
+
+/* Hovering brings one frame forward by letting the others recede, instead of
+ * captioning the tile. Remove this block if you would rather have no hover
+ * behaviour at all. */
+.lay-element-grid:hover img {
+  opacity: 0.45;
+  transition: opacity 260ms ease;
+}
+
+.lay-element-grid img:hover {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  /* Touch screens have no hover, so nothing should dim. */
+  .lay-element-grid:hover img {
+    opacity: 1;
+  }
+}

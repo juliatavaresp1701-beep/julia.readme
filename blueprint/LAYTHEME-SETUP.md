@@ -122,7 +122,7 @@ Which photo belongs to which project, and in what order, is in
 
 | Setting | Value |
 |---|---|
-| Background | `#F7F5F1` (off-white) |
+| Background | `#FFFFFF` (pure white) |
 | Text colour | `#0E0E0E` (near-black) |
 | Link / hover colour | `#B5562F` (clay rust) — hover and active states only |
 | Menu Style | `normal` (plain text, not buttons) |
@@ -141,19 +141,46 @@ exhaust the settings first, and it is good advice.
    displays" → **A static page** → select `Home`.
 3. Edit `Home` → open the **Gridder**.
 4. Toolbar → **+More → Element Grid**.
-5. Add one **Project Thumbnail** per project — all 13, in the table's order.
-6. Settings for the grid:
+5. Settings for the grid:
    - Layout type: **Masonry**
-   - Columns: **4**
-   - Gutter: **2px**
-   - Custom aspect ratio: **off**
-7. **Ok**, then drag the grid's handles out to **Full Width Element**.
-8. Select the grid → **Customize → Project Thumbnails**:
-   - Title: **on, mouseover only**
-   - Description/subtitle: **on**, position **on image**, bottom-left
-   - Gradient overlay: subtle, bottom third only
-9. Above the grid add a **+Text** block with two lines — a small kicker and one
+   - Columns: **8**
+   - Gutter: **20px**
+   - Custom aspect ratio: **off** (natural crops — short frames should leave
+     white space under them, that is the look)
+6. **Ok**, then drag the grid's handles out to **Full Width Element**.
+7. Captions: **off**. The reference has no titles on the grid at all. If the
+   Element Grid is built from Project Thumbnails, select it →
+   **Customize → Project Thumbnails** and turn Title and Description **off**.
+8. Above the grid add a **+Text** block with two lines — a small kicker and one
    sentence. Keep it short; the grid leads this page, not the copy.
+
+### What goes in the grid — one decision to make
+
+The reference is a dense wall of individual photographs, not one cover per
+project. That gives you two routes:
+
+**A. Project Thumbnails (13 tiles).** Add one Project Thumbnail per project,
+as LayTheme intends. Native behaviour: hover, click-through, and Project
+Overlays all work with no extra setup. But at eight columns, 13 tiles fill
+barely two rows — much sparser than the reference.
+
+**B. Individual images (38 tiles).** Add each photograph as an **+Image**
+element inside the Element Grid and link each one to its project page. This
+matches the reference density. The cost: you place and link 38 items by hand,
+and you lose what Project Thumbnails give you for free.
+
+Route A is far less work and is the theme's grain. Route B is what the
+reference actually looks like. A middle option: run route A now to get the
+site standing, then swap in route B later if it still reads too empty — the
+grid is the one element you can rebuild without touching anything else.
+
+### Row gaps
+
+The reference has tight gaps between columns and generous gaps between rows.
+LayTheme's Gutter setting usually applies to both axes at once, so if rows end
+up as tight as columns, add the snippet in `wp/archive-wall.css` to
+**Lay Options → Custom CSS**. Read the comment at the top of that file first —
+you have to point it at the right element.
 
 ## Step 8 — Project pages (build one, reuse it 12 times)
 
