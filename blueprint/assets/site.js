@@ -7,9 +7,36 @@
     return String(n).padStart(2, "0");
   };
 
+  /* ------------------------------------------------------ hover readout
+
+     Hovering a photograph names it in the header. This is what the wall uses
+     instead of captions on the tiles themselves. */
+
+  var readout = document.querySelector("[data-now]");
+  var tiles = document.querySelectorAll(".tile");
+
+  if (readout && tiles.length) {
+    var clear = function () {
+      readout.classList.remove("is-on");
+    };
+
+    tiles.forEach(function (tile) {
+      var show = function () {
+        readout.innerHTML =
+          tile.dataset.name + " <em>" + tile.dataset.sub + "</em>";
+        readout.classList.add("is-on");
+      };
+      tile.addEventListener("mouseenter", show);
+      tile.addEventListener("focus", show);
+      tile.addEventListener("mouseleave", clear);
+      tile.addEventListener("blur", clear);
+    });
+  }
+
   /* ------------------------------------------------- page overlay (index) */
 
   var overlay = document.querySelector("[data-overlay]");
+  var menuSign = document.querySelector("[data-menu-sign]");
   var scrollY = 0;
 
   function openOverlay() {
@@ -20,6 +47,7 @@
     document.body.style.width = "100%";
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
+    if (menuSign) menuSign.textContent = "(–)";
   }
 
   function closeOverlay() {
@@ -30,6 +58,7 @@
     document.body.style.top = "";
     document.body.style.width = "";
     window.scrollTo(0, scrollY);
+    if (menuSign) menuSign.textContent = "(+)";
   }
 
   document.querySelectorAll("[data-overlay-open]").forEach(function (el) {

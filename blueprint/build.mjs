@@ -76,9 +76,13 @@ const head = (title, description, base) => `<meta charset="utf-8">
 <link rel="icon" href="${favicon}">
 <link rel="stylesheet" href="${base}assets/site.css">`;
 
+/* Three zones: a readout that names whatever you're hovering, the site name
+   centred, and the index toggle. The readout is why the tiles carry no
+   captions of their own. */
 const chrome = (base) => `<header class="chrome">
+  <span class="chrome__now" data-now aria-live="polite"></span>
   <a class="chrome__title" href="${base}index.html">${esc(SITE.title)}</a>
-  <button class="chrome__menu" type="button" data-overlay-open aria-controls="overlay">Index</button>
+  <button class="chrome__menu" type="button" data-overlay-open aria-controls="overlay">Index <span class="chrome__sign" data-menu-sign>(+)</span></button>
 </header>`;
 
 /* Page Overlay — project index, about, contact, press marquee. */
@@ -168,20 +172,53 @@ ${body.data ? `<script>window.BLUEPRINT = ${body.data};</script>` : ""}
 
 /* An archive wall: every frame, not one cover per project. At eight narrow
    columns, thirteen tiles would read as an empty page — the density is the
-   point. Each frame links to the project it belongs to. */
-let tileIndex = 0;
-const tiles = manifest
-  .flatMap((project) =>
-    project.images.map((image) => {
-      const eager = tileIndex < 16;
-      tileIndex += 1;
-      return `  <a class="tile" href="projects/${project.slug}.html"
-     title="${esc(project.title)} — ${esc(project.subtitle)}">
+   point. Each frame links to the project it belongs to.
+
+   Order is not manifest order. Strict project order clusters orientations —
+   Back Forty is all landscapes, so it would lay down a band of short frames
+   across a whole row. Instead tall and wide are interleaved, never more than
+   two of a kind consecutively, which keeps the vertical rhythm irregular.
+   The PRNG is seeded, so the arrangement is identical on every build. */
+const wallOrder = (() => {
+  const frames = manifest.flatMap((project) =>
+    project.images.map((image) => ({ project, image }))
+  );
+  const tall = frames.filter((f) => f.image.h >= f.image.w);
+  const wide = frames.filter((f) => f.image.h < f.image.w);
+
+  let seed = 1;
+  const random = () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+
+  const out = [];
+  let run = 0;
+  let last = null;
+
+  while (tall.length || wide.length) {
+    let pick;
+    if (!(tall.length && wide.length)) pick = tall.length ? "T" : "W";
+    else if (run >= 2) pick = last === "T" ? "W" : "T";
+    else pick = random() < tall.length / (tall.length + wide.length) ? "T" : "W";
+
+    run = pick === last ? run + 1 : 1;
+    last = pick;
+    out.push((pick === "T" ? tall : wide).shift());
+  }
+  return out;
+})();
+
+const tiles = wallOrder
+  .map(
+    ({ project, image }, i) => `  <a class="tile" href="projects/${
+      project.slug
+    }.html"
+     data-name="${esc(project.title)}" data-sub="${esc(project.subtitle)}">
     <img src="images/thumbs/${image.file}" width="${image.w}" height="${image.h}"
-         loading="${eager ? "eager" : "lazy"}" decoding="async"
+         loading="${i < 16 ? "eager" : "lazy"}" decoding="async"
          alt="${esc(project.title)} — ${esc(project.subtitle)}">
-  </a>`;
-    })
+  </a>`
   )
   .join("\n");
 
@@ -190,11 +227,6 @@ const home = page(
     title: `${SITE.title} — photography`,
     description: SITE.lede,
     main: `<main>
-  <section class="intro reveal">
-    <p class="intro__kicker label">${esc(SITE.kicker)}</p>
-    <p class="intro__lede">${esc(SITE.lede)}</p>
-  </section>
-
   <div class="grid">
 ${tiles}
   </div>

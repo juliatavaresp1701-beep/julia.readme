@@ -63,17 +63,18 @@ a {
 
 /* ---------------------------------------------------------------- chrome */
 
+/* Three zones on one line: hover readout, centred site name, index toggle. */
 .chrome {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline;
+  gap: 1rem;
   height: var(--chrome);
-  padding: 0 var(--pad);
-  mix-blend-mode: difference;
-  color: #fff;
+  padding: 1.25rem var(--pad) 0;
+  background: var(--paper);
   pointer-events: none;
 }
 
@@ -83,23 +84,44 @@ a {
 }
 
 .chrome__title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  justify-self: center;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Names whatever is under the cursor. Empty until you hover a photograph —
+   this is what the grid uses instead of captions. */
+.chrome__now {
+  font-size: 0.9375rem;
+  min-height: 1.2em;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.chrome__now.is-on {
+  opacity: 1;
+}
+
+.chrome__now em {
+  font-style: normal;
+  color: var(--muted);
 }
 
 .chrome__menu {
+  justify-self: end;
   appearance: none;
   border: 0;
   padding: 0;
   background: none;
   color: inherit;
   font: inherit;
-  font-size: 0.8125rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.9375rem;
   cursor: pointer;
+}
+
+.chrome__sign {
+  color: var(--muted);
 }
 
 .chrome__menu:hover {
@@ -148,7 +170,8 @@ a {
   align-items: start;
   column-gap: var(--gutter);
   row-gap: var(--row-gap);
-  padding: 0 var(--pad);
+  /* Starts directly under the header — no hero, no intro copy. */
+  padding: calc(var(--chrome) + 1.5rem) var(--pad) 0;
 }
 
 .tile {
@@ -164,7 +187,7 @@ a {
 /* No caption, no zoom — hovering just brings the frame forward by letting
    its neighbours recede. */
 .grid:hover .tile img {
-  opacity: 0.45;
+  opacity: 0.55;
 }
 
 .grid .tile:hover img,
